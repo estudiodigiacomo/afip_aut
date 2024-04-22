@@ -2,4 +2,4 @@ env/
 keys.json
 src/build/
 src/dist/
-src/main.spec
+src/main.specrm -rf .git
