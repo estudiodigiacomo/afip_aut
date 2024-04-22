@@ -8,8 +8,8 @@ from nav_preferences import setup_nav_preferences
 from vouchers import vouchers_download
 from tkinter import messagebox
 
-def login_afip(client_name, type_voucher):
-    nav_options = setup_nav_preferences(type_voucher)
+def login_afip(client_name):
+    nav_options = setup_nav_preferences()
     driver = webdriver.Chrome(options= nav_options)
     #Login
     try:
@@ -31,7 +31,8 @@ def login_afip(client_name, type_voucher):
                     password_field.send_keys(password)
                     btn_get_into = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "F1:btnIngresar")))
                     btn_get_into.click()
-                    vouchers_download(client_name, driver, type_voucher)
+                    vouchers_download(client_name, driver)
+                    
                     return driver
                 except Exception as e:
                     messagebox.showerror("Error de ejecución, inicio de sesion: ", str(e))

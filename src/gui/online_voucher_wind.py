@@ -51,13 +51,12 @@ def open_online_vouchers_window(client_name):
     date_to_entry.grid(row=5, column=1, padx=5, pady=5, sticky='w')
 
     #Inicio de automatizacion
-    btn_login = tk.Button(online_vouchers_window, text='Iniciar automatizacion', command=lambda: login_and_open_vouchers(client_name, " ",type_var.get(), point_sale_var.get(), date_from_entry.get(), date_to_entry.get()))
+    btn_login = tk.Button(online_vouchers_window, text='Iniciar automatizacion', command=lambda: login_and_open_vouchers(client_name, 'en-linea',type_var.get(), point_sale_var.get(), date_from_entry.get(), date_to_entry.get()))
 
     btn_login.grid(row=6, column=0, columnspan=2, padx=5, pady=5, sticky='w')
     online_vouchers_window.mainloop()
 
 def login_and_open_vouchers(client_name, type_voucher, type_var, point_sale_var, date_from, date_to):
     login_afip(client_name, type_voucher)
-    print(client_name, type_var, point_sale_var, date_from, date_to)
     online_voucher(client_name, type_var, point_sale_var, date_from, date_to)
     setup_nav_preferences(type_voucher)

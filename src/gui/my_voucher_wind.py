@@ -28,7 +28,7 @@ def open_my_vouchers_window(client_name):
     return client_name, voucher
 
 def login_and_open_vouchers(client_name, type_voucher):
-    login_afip(client_name, type_voucher)
-    vouchers_download(client_name, type_voucher)
     setup_nav_preferences(type_voucher)
+    login_afip(client_name)
+    vouchers_download(client_name, type_voucher)
     

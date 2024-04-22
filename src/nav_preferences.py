@@ -8,6 +8,8 @@ def setup_nav_preferences(type_voucher):
         download_dir = r"c:\comprobantes-emitidos"
     elif type_voucher == 'recibidos':
         download_dir = r"c:\comprobantes-recibidos"
+    elif type_voucher == 'en-linea':
+        download_dir = r"c:\comprobantes-recibidos"
     else:
         print('No se recibio tipo de comprobante')
 
