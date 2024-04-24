@@ -1,7 +1,5 @@
 import tkinter as tk
-from login_afip import login_afip
 from vouchers import vouchers_download
-from nav_preferences import setup_nav_preferences
 
 def open_my_vouchers_window(client_name):
     my_vouchers_window = tk.Tk()
@@ -28,7 +26,5 @@ def open_my_vouchers_window(client_name):
     return client_name, voucher
 
 def login_and_open_vouchers(client_name, type_voucher):
-    setup_nav_preferences(type_voucher)
-    login_afip(client_name)
     vouchers_download(client_name, type_voucher)
     

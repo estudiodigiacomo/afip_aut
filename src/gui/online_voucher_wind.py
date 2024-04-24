@@ -1,15 +1,12 @@
 import tkinter as tk
 from read_sheet_afip import get_clients_from_sheets
-from login_afip import login_afip
 from online_vouchers import online_voucher
-from tkinter import ttk
 from tkcalendar import DateEntry
-from nav_preferences import setup_nav_preferences 
 
 def open_online_vouchers_window(client_name):
     online_vouchers_window = tk.Tk()
     online_vouchers_window.title('Comprobantes en Línea')
-    online_vouchers_window.geometry('400x200')
+    online_vouchers_window.geometry('400x500')
 
     clients = get_clients_from_sheets()
     for client in clients:
@@ -19,7 +16,7 @@ def open_online_vouchers_window(client_name):
     selection_online = tk.Label(online_vouchers_window, text='Seleccione opciones para descarga de comprobante:')
     selection_online.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky='w')
 
-    type_options = ['seleccionar...', 'Factura A', 'Nota de Débito A', 'Nota de Crédito A', 'Recibo A', 'Factura B', 'Nota de Débito B', 'Nota de Crédito B', 'Recibo B', 'Factura C', 'Nota de Débito C', 'Nota de Crédito C', 'Recibo C', 'Factura de Exportación E', 'Nota de Débito por Operaciones con el Exterior E', 'Nota de Crédito por Operaciones con el Exterior E', 'Comprobante de Compra de Bienes Usados', 'Factura M', 'Nota de Débito M', 'Nota de Crédito M', 'Recibo M', 'Factura T', 'Nota de Débito T', 'Nota de Crédito T', 'Factura de Crédito Electrónica MiPyMEs (FCE) A', 'Nota de Débito Electrónica MiPyMEs (FCE) A', 'Nota de Crédito Electrónica MiPyMEs (FCE) A', 'Factura de Crédito Electrónica MiPyMEs (FCE) B', 'Nota de Débito Electrónica MiPyMEs (FCE) B', 'Nota de Crédito Electrónica MiPyMEs (FCE) B', 'Factura de Crédito Electrónica MiPyMEs (FCE) C', 'Nota de Débito Electrónica MiPyMEs (FCE) C', 'Nota de Crédito Electrónica MiPyMEs (FCE) C']
+    type_options = ['seleccionar...', '  Factura A', '  Nota de Débito A', '  Nota de Crédito A', '  Recibo A', '  Factura B', '  Nota de Débito B', '  Nota de Crédito B', '  Recibo B', '  Factura C', '  Nota de Débito C', '  Nota de Crédito C', '  Recibo C', '  Factura de Exportación E', '  Nota de Débito por Operaciones con el Exterior E', '  Nota de Crédito por Operaciones con el Exterior E', '  Comprobante de Compra de Bienes Usados', '  Factura M', '  Nota de Débito M', '  Nota de Crédito M', '  Recibo M', '  Factura T', '  Nota de Débito T', '  Nota de Crédito T', '  Factura de Crédito Electrónica MiPyMEs (FCE) A', '  Nota de Débito Electrónica MiPyMEs (FCE) A', '  Nota de Crédito Electrónica MiPyMEs (FCE) A', '  Factura de Crédito Electrónica MiPyMEs (FCE) B', '  Nota de Débito Electrónica MiPyMEs (FCE) B', '  Nota de Crédito Electrónica MiPyMEs (FCE) B', '  Factura de Crédito Electrónica MiPyMEs (FCE) C', '  Nota de Débito Electrónica MiPyMEs (FCE) C', '  Nota de Crédito Electrónica MiPyMEs (FCE) C']
 
     #Tipo de comprobante
     type_label = tk.Label(online_vouchers_window, text="Tipo:")
@@ -51,12 +48,10 @@ def open_online_vouchers_window(client_name):
     date_to_entry.grid(row=5, column=1, padx=5, pady=5, sticky='w')
 
     #Inicio de automatizacion
-    btn_login = tk.Button(online_vouchers_window, text='Iniciar automatizacion', command=lambda: login_and_open_vouchers(client_name, 'en-linea',type_var.get(), point_sale_var.get(), date_from_entry.get(), date_to_entry.get()))
+    btn_login = tk.Button(online_vouchers_window, text='Iniciar automatizacion', command=lambda: login_and_open_vouchers(client_name, type_var.get(), point_sale_var.get(), date_from_entry.get(), date_to_entry.get()))
 
     btn_login.grid(row=6, column=0, columnspan=2, padx=5, pady=5, sticky='w')
     online_vouchers_window.mainloop()
 
-def login_and_open_vouchers(client_name, type_voucher, type_var, point_sale_var, date_from, date_to):
-    login_afip(client_name, type_voucher)
+def login_and_open_vouchers(client_name, type_var, point_sale_var, date_from, date_to):
     online_voucher(client_name, type_var, point_sale_var, date_from, date_to)
-    setup_nav_preferences(type_voucher)

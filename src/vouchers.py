@@ -3,11 +3,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
 from datetime import datetime
+from login_afip import login_afip
 import os
 import time
 
-def vouchers_download(client_name, driver, type_voucher):
+def vouchers_download(client_name, type_voucher):
     try:
+        driver = login_afip(client_name)
         driver.get('https://portalcf.cloud.afip.gob.ar/portal/app/')
         # Tipeo mis comprobantes
         input_search = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "buscadorInput")))
