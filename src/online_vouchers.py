@@ -80,9 +80,22 @@ def online_voucher(client_name, type_var, point_sale_var, date_from, date_to):
         btn_search = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/table/tbody/tr/td/input[2]')))
         btn_search.click()
 
-        
-        
         try:
+            #camelCase para identificar las carpetas
+            name_client_may = client_name
+            words = name_client_may.split()
+            camel_case_words = [word.capitalize() for word in words]
+            client_name_camel = ' '.join(camel_case_words)
+
+            #Ingreso nombre del cliente en la ruta
+            route_base = r'c:\Clientes\{}\Comprobante en linea'
+            route_format = route_base.format(client_name_camel)
+
+            #Verifico si ya existe la carpeta de ese periodo
+            period_date = date_from[3:]
+            print(period_date)
+            name_folder_period = f'Periodo {period_date}'
+
             #Verifico si existen comprobantes
             table_with_data = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[3]/div/table/tbody/tr[2]')))
             #Descarga de factura, rar y resumen
