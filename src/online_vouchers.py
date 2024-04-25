@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 import time
+import os
 
 def online_voucher(client_name, type_var, point_sale_var, date_from, date_to):
     try:
@@ -80,7 +81,18 @@ def online_voucher(client_name, type_var, point_sale_var, date_from, date_to):
         btn_search.click()
 
         
+        
+        try:
+            #Verifico si existen comprobantes
+            table_with_data = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[3]/div/table/tbody/tr[2]')))
+            #Descarga de factura, rar y resumen
+            if table_with_data.text.strip():
+                print('TENEMOS DATOS')
 
+            else:
+                print('NO TENEMOS DATOS')
+        except:
+            print('NO TENEMOS DATOS')
         time.sleep(15)
     except Exception as e:
         print('Error:', str(e))
