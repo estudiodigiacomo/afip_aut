@@ -11,7 +11,7 @@ def open_online_vouchers_window(client_name):
     clients = get_clients_from_sheets()
     for client in clients:
         if client['name'] == client_name:
-            pto_venta1, pto_venta2, pto_venta3, pto_venta4 = client['pto_venta1'], client['pto_venta2'], client['pto_venta3'], client['pto_venta4']
+            pto_venta1, pto_venta2, pto_venta3, pto_venta4, actividad = client['pto_venta1'], client['pto_venta2'], client['pto_venta3'], client['pto_venta4'], client['actividad']
 
     selection_online = tk.Label(online_vouchers_window, text='Seleccione opciones para descarga de comprobante:')
     selection_online.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky='w')
@@ -48,10 +48,10 @@ def open_online_vouchers_window(client_name):
     date_to_entry.grid(row=5, column=1, padx=5, pady=5, sticky='w')
 
     #Inicio de automatizacion
-    btn_login = tk.Button(online_vouchers_window, text='Iniciar automatizacion', command=lambda: login_and_open_vouchers(client_name, type_var.get(), point_sale_var.get(), date_from_entry.get(), date_to_entry.get()))
+    btn_login = tk.Button(online_vouchers_window, text='Iniciar automatizacion', command=lambda: login_and_open_vouchers(client_name, type_var.get(), point_sale_var.get(), date_from_entry.get(), date_to_entry.get(), actividad))
 
     btn_login.grid(row=6, column=0, columnspan=2, padx=5, pady=5, sticky='w')
     online_vouchers_window.mainloop()
 
-def login_and_open_vouchers(client_name, type_var, point_sale_var, date_from, date_to):
-    online_voucher(client_name, type_var, point_sale_var, date_from, date_to)
+def login_and_open_vouchers(client_name, type_var, point_sale_var, date_from, date_to, actividad):
+    online_voucher(client_name, type_var, point_sale_var, date_from, date_to, actividad)
