@@ -1,5 +1,5 @@
 import tkinter as tk
-from vouchers import vouchers_download
+from my_vouchers import vouchers_download
 
 def open_my_vouchers_window(client_name):
     my_vouchers_window = tk.Tk()

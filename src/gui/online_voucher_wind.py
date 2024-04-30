@@ -2,6 +2,7 @@ import tkinter as tk
 from read_sheet_afip import get_clients_from_sheets
 from online_vouchers import online_voucher
 from tkcalendar import DateEntry
+import babel.numbers
 
 def open_online_vouchers_window(client_name):
     online_vouchers_window = tk.Tk()
