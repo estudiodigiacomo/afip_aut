@@ -85,18 +85,29 @@ def constancy_cuit(driver):
     time.sleep(2)
     
     try:
-        #Guardar como PDF
-        dropdown_pdf = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//select[@id='destinationSelect']/option[@value='Save as PDF/local/']")))
-        # Hacer clic en la opción "Guardar como PDF"
-        dropdown_pdf.click()
-    except:
-        print('FALLO AL ELEGIR PDF EN DROPDOWN')
-    time.sleep(5)
+        time.sleep(2)
+        # Cambiar el enfoque al diálogo de impresión
+        driver.switch_to.window(driver.window_handles[1])
 
-    try:
-        #Botón guardar
-        save_button = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH, '/html/body/print-preview-app//print-preview-sidebar//print-preview-button-strip//div/cr-button[1]')))
-        save_button.click()
+        # Esperar a que aparezca el md-select
+        select_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'md-select')))
+        # Hacer clic en el md-select para abrir el menú desplegable
+        select_element.click()
+
+        # Esperar a que aparezcan las opciones del menú desplegable
+        options = WebDriverWait(driver, 10).until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'md-option')))
+
+        # Iterar sobre las opciones y seleccionar "Guardar como PDF"
+        for option in options:
+            if option.text == "Save as PDF":
+                option.click()
+                break
+
+        # Esperar un breve momento para que se active la opción "Guardar"
+        time.sleep(3)
+
+        # Hacer clic en el botón de "Guardar"
+        driver.find_element(By.CSS_SELECTOR, "div#sidebar button#save").click()
     except:
         print('FALLO AL PRESIONAR BOTON DE GUARDAR')
     
