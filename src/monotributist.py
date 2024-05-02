@@ -22,9 +22,8 @@ def monotributist(client_name, constancy):
 
         # Agregar opciones al objeto driver
         driver.chrome_options = webdriver.ChromeOptions()
-        driver.chrome_options.add_argument('--disable-gpu')  # Desactivar GPU para evitar problemas de impresión en algunos sistemas
-        driver.chrome_options.add_argument('--print-to-pdf')  # Habilitar la impresión a PDF
-        # Asignar las opciones al objeto driver
+        driver.chrome_options.add_argument('--disable-gpu')
+        driver.chrome_options.add_argument('--print-to-pdf')
         driver.execute("send_command", params)
 
         #Tipeo monotributo
@@ -79,8 +78,25 @@ def constancy_cuit(driver):
     driver.close()
     # Cambio de foco a la primera ventana
     driver.switch_to.window(windows_to_select[1])
+    time.sleep(5)
+    #Btn imprimir
+    print_btn = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/table[1]/tbody/tr/td[3]/table/tbody/tr/td/a')))
+    print_btn.click()
+    time.sleep(2)
     
-    driver.implicitly_wait(10)
-    # Guardar la página como PDF
-    driver.execute_script('window.print();')
+    try:
+        #Guardar como PDF
+        dropdown_pdf = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//select[@id='destinationSelect']/option[@value='Save as PDF/local/']")))
+        # Hacer clic en la opción "Guardar como PDF"
+        dropdown_pdf.click()
+    except:
+        print('FALLO AL ELEGIR PDF EN DROPDOWN')
+    time.sleep(5)
+
+    try:
+        #Botón guardar
+        save_button = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH, '/html/body/print-preview-app//print-preview-sidebar//print-preview-button-strip//div/cr-button[1]')))
+        save_button.click()
+    except:
+        print('FALLO AL PRESIONAR BOTON DE GUARDAR')
     

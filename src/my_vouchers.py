@@ -6,6 +6,7 @@ from datetime import datetime
 from login_afip import login_afip
 import os
 import time
+import zipfile
 
 def vouchers_download(client_name, type_voucher):
     try:
@@ -26,6 +27,19 @@ def vouchers_download(client_name, type_voucher):
         driver.close()
         # Cambio de foco a la primera ventana
         driver.switch_to.window(windows_to_select[1])
+
+        if type_voucher == 'emitidos':
+            download_dir = r"c:\comprobantes-emitidos"
+        else:
+            download_dir = r"c:\comprobantes-recibidos"
+
+                # Configura la ruta de descarga
+        prefs = {
+            "download.default_directory": download_dir
+        }
+        driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
+        params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
+        driver.execute("send_command", params)
         
         #En caso de existir ventana de respesentante entramos al condicional 
         if 'Elegí una persona para ingresar' in driver.page_source:
@@ -63,6 +77,7 @@ def vouchers_download(client_name, type_voucher):
         else:
             print('Error: No se encontro la ruta de mis comprobantes')
 
+
         issued = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fechaEmision")))
         issued.click()
 
@@ -94,11 +109,6 @@ def vouchers_download(client_name, type_voucher):
         date_now = datetime.now().date()
         date_emision = date_now.strftime("%d-%m-%Y")
 
-        if type_voucher == 'emitidos':
-            download_dir = r"c:\comprobantes-emitidos"
-        else:
-            download_dir = r"c:\comprobantes-recibidos"
-
         #Verificar si el comprobante esta vacio
         if 'No existe información para los filtros ingresados' in driver.page_source:
             default_content = "Contenido del archivo predeterminado"
@@ -110,41 +120,122 @@ def vouchers_download(client_name, type_voucher):
 
         else:
             # Descargar pdf
-            time.sleep(10)
+            time.sleep(5)
             download_pdf = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="tablaDataTables_wrapper"]/div[1]/div[1]/div/button[2]')))
-            
             download_pdf.click()
-            # Espera para que se complete la descarga
+            time.sleep(5)
+            # Obtener una lista de todos los archivos en la carpeta de descargas
+            list_of_files = os.listdir(download_dir)
+            # Buscar el archivo más reciente
+            latest_file = None
+            latest_file_time = 0
+            for file_name in list_of_files:
+                file_path = os.path.join(download_dir, file_name)
+                if os.path.isfile(file_path):
+                    file_time = os.path.getctime(file_path)
+                if file_time > latest_file_time:
+                    latest_file_time = file_time
+                    latest_file = file_path
+
+            # Verificar si se encontró un archivo más reciente
+            if latest_file:
+                if type_voucher == 'emitidos':
+                    nombre_archivo = f'AFIP - Mis Comprobantes Emitidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}'
+                elif type_voucher == 'recibidos':
+                    nombre_archivo = f'AFIP - Mis Comprobantes Recibidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}'
+                else:
+                    print('Error al designar el nombre del archivo, no se proporciona tipo de comprobante')
+                new_file_path = os.path.join(download_dir, f"{nombre_archivo}.pdf")
+                # Renombrar el archivo
+                os.rename(latest_file, new_file_path)
+                print("Archivo descargado y renombrado correctamente.")
+            else:
+                print("No se encontraron archivos en la carpeta de descargas.")
+            # Espera para que se renombre
             time.sleep(10)
 
-        # Obtener una lista de todos los archivos en la carpeta de descargas
-        list_of_files = os.listdir(download_dir)
-        # Buscar el archivo más reciente
-        latest_file = None
-        latest_file_time = 0
-        for file_name in list_of_files:
-            file_path = os.path.join(download_dir, file_name)
-            if os.path.isfile(file_path):
-                file_time = os.path.getctime(file_path)
-            if file_time > latest_file_time:
-                latest_file_time = file_time
-                latest_file = file_path
+            download_excel = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section/div[1]/div/div[2]/div[2]/div[2]/div[1]/div[1]/div/button[1]')))
+            download_excel.click()
+            time.sleep(5)
+            # Obtener una lista de todos los archivos en la carpeta de descargas
+            list_of_files = os.listdir(download_dir)
+            # Buscar el archivo más reciente
+            latest_file = None
+            latest_file_time = 0
+            for file_name in list_of_files:
+                file_path = os.path.join(download_dir, file_name)
+                if os.path.isfile(file_path):
+                    file_time = os.path.getctime(file_path)
+                if file_time > latest_file_time:
+                    latest_file_time = file_time
+                    latest_file = file_path
 
-        # Verificar si se encontró un archivo más reciente
-        if latest_file:
-            if type_voucher == 'emitidos':
-                nombre_archivo = f'AFIP - Mis Comprobantes Emitidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}'
-            elif type_voucher == 'recibidos':
-                nombre_archivo = f'AFIP - Mis Comprobantes Recibidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}'
+            # Verificar si se encontró un archivo más reciente
+            if latest_file:
+                if type_voucher == 'emitidos':
+                    nombre_archivo = f'AFIP - Mis Comprobantes Emitidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}'
+                elif type_voucher == 'recibidos':
+                    nombre_archivo = f'AFIP - Mis Comprobantes Recibidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}'
+                else:
+                    print('Error al designar el nombre del archivo, no se proporciona tipo de comprobante')
+                new_file_path = os.path.join(download_dir, f"{nombre_archivo}.xlsx")
+                # Renombrar el archivo
+                os.rename(latest_file, new_file_path)
+                print("Archivo descargado y renombrado correctamente.")
             else:
-                print('Error al designar el nombre del archivo, no se proporciona tipo de comprobante')
-            new_file_path = os.path.join(download_dir, f"{nombre_archivo}.pdf")
-            # Renombrar el archivo
-            os.rename(latest_file, new_file_path)
-            print("Archivo descargado y renombrado correctamente.")
-        else:
-            print("No se encontraron archivos en la carpeta de descargas.")
+                print("No se encontraron archivos en la carpeta de descargas.")
+            # Espera para que se renombre
+            time.sleep(10)
 
+            download_csv = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section/div[1]/div/div[2]/div[2]/div[2]/div[1]/div[1]/div/button[3]')))
+            download_csv.click()
+            time.sleep(5)
+            list_of_files = os.listdir(download_dir)
+            # Buscar el archivo ZIP dentro del directorio de descargas
+            zip_file_path = None
+            for file_name in list_of_files:
+                if file_name.endswith('.zip'):
+                    zip_file_path = os.path.join(download_dir, file_name)
+                    break
+            # Verificar si se encontró el archivo ZIP
+            if zip_file_path:
+                # Extraer el contenido del archivo ZIP
+                with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+                    zip_ref.extractall(download_dir)
+                print("Archivo ZIP descomprimido correctamente.")
+            else:
+                print("No se encontró ningún archivo ZIP en el directorio de descargas.")
+            time.sleep(5)
+                        # Obtener una lista de todos los archivos en la carpeta de descargas
+            list_of_files = os.listdir(download_dir)
+            # Buscar el archivo más reciente
+            latest_file = None
+            latest_file_time = 0
+            for file_name in list_of_files:
+                file_path = os.path.join(download_dir, file_name)
+                if os.path.isfile(file_path):
+                    file_time = os.path.getctime(file_path)
+                if file_time > latest_file_time:
+                    latest_file_time = file_time
+                    latest_file = file_path
+
+            # Verificar si se encontró un archivo más reciente
+            if latest_file:
+                if type_voucher == 'emitidos':
+                    nombre_archivo = f'AFIP - Mis Comprobantes Emitidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}'
+                elif type_voucher == 'recibidos':
+                    nombre_archivo = f'AFIP - Mis Comprobantes Recibidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}'
+                else:
+                    print('Error al designar el nombre del archivo, no se proporciona tipo de comprobante')
+                new_file_path = os.path.join(download_dir, f"{nombre_archivo}.csv")
+                # Renombrar el archivo
+                os.rename(latest_file, new_file_path)
+                print("Archivo descargado y renombrado correctamente.")
+            else:
+                print("No se encontraron archivos en la carpeta de descargas.")
+           
+
+            
     except Exception as e:
         print('Error al procesar comprobantes:', str(e))
     finally:
