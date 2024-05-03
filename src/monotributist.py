@@ -1,29 +1,28 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
+from selenium.common.exceptions import NoSuchElementException
 from login_afip import login_afip
 from selenium import webdriver
+from datetime import datetime
 import os
 import time 
+import pyautogui
+import shutil
 
 def monotributist(client_name, constancy):
     try:
         driver = login_afip(client_name)
         driver.get('https://portalcf.cloud.afip.gob.ar/portal/app/')
 
-        download_dir = r'c:\test'
+        download_dir = r'c:\default' 
 
         # Configura la ruta de descarga
-        driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
-        params = {
-            'cmd': 'Page.setDownloadBehavior',
-            'params': {'behavior': 'allow', 'downloadPath': download_dir}
+        prefs = {
+            "download.default_directory": download_dir
         }
-
-        # Agregar opciones al objeto driver
-        driver.chrome_options = webdriver.ChromeOptions()
-        driver.chrome_options.add_argument('--disable-gpu')
-        driver.chrome_options.add_argument('--print-to-pdf')
+        driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
+        params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
         driver.execute("send_command", params)
 
         #Tipeo monotributo
@@ -45,21 +44,13 @@ def monotributist(client_name, constancy):
         section_constancy = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/form/main/section/div/div/aside/nav/ul/div[1]/li[4]/a')))
         section_constancy.click()
 
-        if constancy == 'Constancia de CUIT':
-            constancy_cuit(driver)
-        elif constancy == 'Formulario 184':
-            click_constancy = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/form/main/section/div/div/div/div[2]/div/div/div[3]/a')))
-            click_constancy.click()
+        if constancy != 'Credencial de pago':
+            constancy_cuit(driver, client_name, constancy)
         elif constancy == 'Credencial de pago':
-            click_constancy = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/form/main/section/div/div/div/div[3]/div/div/div[3]/a')))
-            click_constancy.click()
-        elif constancy == 'Formulario Nº 960 Data Fiscal':
-            click_constancy = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/form/main/section/div/div/div/div[4]/div/div/div[3]/button')))
-            click_constancy.click()
+            credentials_pay(driver, client_name)
         else:
-            print('No se selecciono constancia ')
-
-        time.sleep(15)
+            print('Error al llamar la funcion constancy')
+        time.sleep(10)
 
     except Exception as e:
         print('Error al procesar constancias:', str(e))
@@ -67,47 +58,157 @@ def monotributist(client_name, constancy):
         driver.quit()
         os._exit(0)
 
-def constancy_cuit(driver):
-    click_constancy = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/form/main/section/div/div/div/div[1]/div/div/div[3]/button')))
-    click_constancy.click()
 
-    # Selección de primera ventana 
+def constancy_cuit(driver, client_name, constancy):
+
+    if constancy == 'Constancia de CUIT':
+        click_constancy = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/form/main/section/div/div/div/div[1]/div/div/div[3]/button')))
+        click_constancy.click()
+    elif constancy == 'Formulario 184':
+        click_form = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/form/main/section/div/div/div/div[2]/div/div/div[3]/a')))
+        click_form.click()
+    else:
+            print('No se selecciono constancia ')
+
+    #Cambio de frame al hacer click en click_constancy
     windows_to_select = driver.window_handles
-    driver.switch_to.window(windows_to_select[0])
-    # Cierre de ventana mis comprobantes
-    driver.close()
-    # Cambio de foco a la primera ventana
-    driver.switch_to.window(windows_to_select[1])
+    driver.switch_to.window(windows_to_select[-1])
+    
+    time.sleep(10)
+    # Comando de teclas para descargar pdf
+    pyautogui.hotkey('ctrl', 'p')
+    time.sleep(3)
+    for _ in range(5):
+        pyautogui.press('tab')
+    pyautogui.press('down')
+    time.sleep(3)
+    for _ in range(4):
+        pyautogui.press('tab')
+    time.sleep(3)
+    pyautogui.press('enter')
+    time.sleep(3)
+    for _ in range(6):
+        pyautogui.press('tab')
+    time.sleep(3)
+    pyautogui.press('enter')
+    time.sleep(3)
+    pyautogui.typewrite('c:/default')
+    time.sleep(3)
+    pyautogui.press('enter')
+    for _ in range(9):
+        pyautogui.press('tab')
+    time.sleep(3)
+    pyautogui.press('enter')
+    time.sleep(10)
+    # Fecha emisión
+    date_now = datetime.now().date()
+    date_emision = date_now.strftime("%d-%m-%Y")
+    name_folder_emision = f'Emisión {date_emision}'
+
+    #camelCase para identificar las carpetas de cliente
+    name_client_may = client_name
+    words = name_client_may.split()
+    camel_case_words = [word.capitalize() for word in words]
+    client_name_camel = ' '.join(camel_case_words)
+    #Ingreso nombre del cliente en la ruta
+    route_base = r'C:\Clientes\{}\Reporte'
+    route_format = route_base.format(client_name_camel)
+    route_completed = os.path.join(route_format, name_folder_emision)
+
+    #Verifico si ya existe la carpeta de ese periodo, si no existe la creo
+    if not name_folder_emision in os.listdir(route_format):
+        os.makedirs(route_completed)
+    time.sleep(10)
+    # Ruta del archivo descargado
+    if constancy == 'Constancia de CUIT':
+        download_default = r'c:\default\Formulario de Impresión de Constancia de Monotributo.pdf'
+    elif constancy == 'Formulario 184':
+        download_default = r'c:\default\AFIP _ Formulario 184.pdf'
+    else:
+        print('Error en download_route ')
+    # Ruta del directorio de destino
+    shutil.move(download_default, route_completed)
+    # Verificar que el archivo se haya movido correctamente
+    ruta_destino = os.path.join(download_default, os.path.basename(route_completed))
+    if os.path.exists(ruta_destino):
+        print("El archivo se movió correctamente")
+
+    #Obtener una lista de todos los archivos en la carpeta
+    list_of_files = os.listdir(route_completed)
+    # Buscar el archivo más reciente
+    latest_file = None
+    latest_file_time = 0
+    for file_name in list_of_files:
+        file_path = os.path.join(route_completed, file_name)
+        if os.path.isfile(file_path):
+            file_time = os.path.getctime(file_path)
+        if file_time > latest_file_time:
+            latest_file_time = file_time
+            latest_file = file_path
+    #Renombro el archivo
+    if constancy == 'Constancia de CUIT':
+        name_voucher = f'Constancia de inscripción - Monotributistas - AFIP - {client_name} - {name_folder_emision}'
+    elif constancy == 'Formulario 184':
+        name_voucher = f'Formulario N°184 - Monotributistas - AFIP - {client_name} - {name_folder_emision}'
+    else:
+        print('No se selecciono constancia ')
+    
+    new_file_path = os.path.join(route_completed, f"{name_voucher}.pdf")
+    os.rename(latest_file, new_file_path)
+    print("Archivo descargado y renombrado correctamente.")
     time.sleep(5)
-    #Btn imprimir
-    print_btn = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/table[1]/tbody/tr/td[3]/table/tbody/tr/td/a')))
-    print_btn.click()
-    time.sleep(2)
-    
+
+
+import os
+
+def credentials_pay(driver, client_name):
     try:
-        time.sleep(2)
-        # Cambiar el enfoque al diálogo de impresión
-        driver.switch_to.window(driver.window_handles[1])
+        click_constancy = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/form/main/section/div/div/div/div[3]/div/div/div[3]/a')))
+        click_constancy.click()
 
-        # Esperar a que aparezca el md-select
-        select_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'md-select')))
-        # Hacer clic en el md-select para abrir el menú desplegable
-        select_element.click()
+        # Esperar un momento para que se complete la descarga
+        time.sleep(10)
 
-        # Esperar a que aparezcan las opciones del menú desplegable
-        options = WebDriverWait(driver, 10).until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'md-option')))
+        # Obtener la ruta de descarga predeterminada
+        download_default = r'c:\default'  # Ruta de descarga predeterminada en este caso
 
-        # Iterar sobre las opciones y seleccionar "Guardar como PDF"
-        for option in options:
-            if option.text == "Save as PDF":
-                option.click()
-                break
+        # Configurar la ruta de destino
+        date_now = datetime.now().date()
+        date_emision = date_now.strftime("%d-%m-%Y")
+        name_folder_emision = f'Emisión {date_emision}'
 
-        # Esperar un breve momento para que se active la opción "Guardar"
-        time.sleep(3)
+        # CamelCase para identificar las carpetas de cliente
+        name_client_may = client_name
+        words = name_client_may.split()
+        camel_case_words = [word.capitalize() for word in words]
+        client_name_camel = ' '.join(camel_case_words)
 
-        # Hacer clic en el botón de "Guardar"
-        driver.find_element(By.CSS_SELECTOR, "div#sidebar button#save").click()
-    except:
-        print('FALLO AL PRESIONAR BOTON DE GUARDAR')
-    
+        # Ingresar el nombre del cliente en la ruta
+        route_base = r'C:\Clientes\{}\Reporte'
+        route_format = route_base.format(client_name_camel)
+        route_completed = os.path.join(route_format, name_folder_emision)
+
+        # Obtener la lista de archivos en el directorio de descarga
+        files_in_download = os.listdir(download_default)
+
+        # Encontrar el archivo más reciente basado en su fecha de creación
+        latest_file = max(files_in_download, key=lambda f: os.path.getctime(os.path.join(download_default, f)))
+
+        # Mover el archivo más reciente al directorio de destino
+        shutil.move(os.path.join(download_default, latest_file), route_completed)
+
+        # Verificar que el archivo se haya movido correctamente
+        ruta_destino = os.path.join(route_completed, latest_file)
+
+        name_file = f' - Credencial de pago - AFIP - {client_name} - {name_folder_emision}'
+
+        new_file_path = os.path.join(route_completed, name_file)
+        os.rename(os.path.join(route_completed, latest_file), new_file_path)
+
+        if os.path.exists(ruta_destino):
+            print("El archivo se movió correctamente")
+
+    except Exception as e:
+        print('Error al procesar la descarga de credencial de pago:', str(e))
+
+
