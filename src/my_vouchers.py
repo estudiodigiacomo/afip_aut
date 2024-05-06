@@ -8,7 +8,7 @@ import os
 import time
 import zipfile
 
-def vouchers_download(client_name, type_voucher):
+def vouchers_download(client_name, type_voucher, date_from, date_to):
     try:
         driver = login_afip(client_name)
         driver.get('https://portalcf.cloud.afip.gob.ar/portal/app/')
@@ -19,6 +19,9 @@ def vouchers_download(client_name, type_voucher):
         my_receipts = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "rbt-menu-item-0")))
         my_receipts.click()
         time.sleep(5)
+        
+        print('FECHA DESDE: ', date_from)
+        print('FECHA HASTA: ', date_to)
 
         # Selección de primera ventana 
         windows_to_select = driver.window_handles
@@ -81,9 +84,16 @@ def vouchers_download(client_name, type_voucher):
         issued = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fechaEmision")))
         issued.click()
 
-        # Mes pasado
-        last_month = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/div[3]/ul/li[7]")))
-        last_month.click()
+        #Fecha desde
+        date_select_from = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/div[1]/div[1]/input")))
+        date_select_from.clear()
+        date_select_from.send_keys(date_from)
+        time.sleep(5)
+        #Fecha hasta
+        date_select_to = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/div[2]/div[1]/input")))
+        date_select_to.clear()
+        date_select_to.send_keys(date_to)
+        time.sleep(5)
 
         # Buscar comprobantes
         search_proof = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'buscarComprobantes')))
@@ -112,12 +122,11 @@ def vouchers_download(client_name, type_voucher):
         #Verificar si el comprobante esta vacio
         if 'No existe información para los filtros ingresados' in driver.page_source:
             default_content = "Contenido del archivo predeterminado"
-            default_file_path = os.path.join(download_dir, "default_vacio.txt")
+            default_file_path = os.path.join(download_dir, "default_vacio.pdf")
             with open(default_file_path, "w") as file:
                 file.write(default_content)
                 # Espera para que se complete la descarga
                 time.sleep(10)
-
         else:
             # Descargar pdf
             time.sleep(5)
@@ -153,9 +162,17 @@ def vouchers_download(client_name, type_voucher):
                 print("No se encontraron archivos en la carpeta de descargas.")
             # Espera para que se renombre
             time.sleep(10)
+            
+            # Verificar si se encontró un archivo más reciente
+            if type_voucher == 'emitidos':
+                download_excel_emi = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section/div[1]/div/div[2]/div[2]/div[2]/div[1]/div[1]/div/button[1]')))
+                download_excel_emi.click()
+            elif type_voucher == 'recibidos':
+                download_excel_reci = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section/div/div/div[2]/div[3]/div[2]/div[1]/div[1]/div/button[1]')))
+                download_excel_reci.click()
+            else:
+                print('Error al presionar boton para decsarga de excel')
 
-            download_excel = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section/div[1]/div/div[2]/div[2]/div[2]/div[1]/div[1]/div/button[1]')))
-            download_excel.click()
             time.sleep(5)
             # Obtener una lista de todos los archivos en la carpeta de descargas
             list_of_files = os.listdir(download_dir)
@@ -187,8 +204,15 @@ def vouchers_download(client_name, type_voucher):
             # Espera para que se renombre
             time.sleep(10)
 
-            download_csv = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section/div[1]/div/div[2]/div[2]/div[2]/div[1]/div[1]/div/button[3]')))
-            download_csv.click()
+            # Verificar si se encontró un archivo más reciente
+            if type_voucher == 'emitidos':
+                download_csv_emi = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section/div[1]/div/div[2]/div[2]/div[2]/div[1]/div[1]/div/button[1]')))
+                download_csv_emi.click()
+            elif type_voucher == 'recibidos':
+                download_csv_reci = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section/div/div/div[2]/div[3]/div[2]/div[1]/div[1]/div/button[1]')))
+                download_csv_reci.click()
+            else:
+                print('Error al presionar boton para decsarga de excel')
             time.sleep(5)
             list_of_files = os.listdir(download_dir)
             # Buscar el archivo ZIP dentro del directorio de descargas

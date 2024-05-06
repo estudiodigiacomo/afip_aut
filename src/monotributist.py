@@ -77,7 +77,8 @@ def constancy_cuit(driver, client_name, constancy):
     time.sleep(10)
     # Comando de teclas para descargar pdf
     pyautogui.hotkey('ctrl', 'p')
-    time.sleep(3)
+    time.sleep(10)
+    #Tab y down descargar como pdf
     for _ in range(5):
         pyautogui.press('tab')
     pyautogui.press('down')
@@ -87,7 +88,8 @@ def constancy_cuit(driver, client_name, constancy):
     time.sleep(3)
     pyautogui.press('enter')
     time.sleep(3)
-    for _ in range(6):
+    #Tab guardar windows
+    for _ in range(5):
         pyautogui.press('tab')
     time.sleep(3)
     pyautogui.press('enter')
@@ -111,7 +113,7 @@ def constancy_cuit(driver, client_name, constancy):
     camel_case_words = [word.capitalize() for word in words]
     client_name_camel = ' '.join(camel_case_words)
     #Ingreso nombre del cliente en la ruta
-    route_base = r'C:\Clientes\{}\Reporte'
+    route_base = r'D:\Clientes\{}\Reporte'
     route_format = route_base.format(client_name_camel)
     route_completed = os.path.join(route_format, name_folder_emision)
 
@@ -184,7 +186,7 @@ def credentials_pay(driver, client_name):
         client_name_camel = ' '.join(camel_case_words)
 
         # Ingresar el nombre del cliente en la ruta
-        route_base = r'C:\Clientes\{}\Reporte'
+        route_base = r'D:\Clientes\{}\Reporte'
         route_format = route_base.format(client_name_camel)
         route_completed = os.path.join(route_format, name_folder_emision)
 
@@ -200,7 +202,7 @@ def credentials_pay(driver, client_name):
         # Verificar que el archivo se haya movido correctamente
         ruta_destino = os.path.join(route_completed, latest_file)
 
-        name_file = f' - Credencial de pago - AFIP - {client_name} - {name_folder_emision}'
+        name_file = f'Credencial de pago - AFIP - {client_name} - {name_folder_emision}.pdf'
 
         new_file_path = os.path.join(route_completed, name_file)
         os.rename(os.path.join(route_completed, latest_file), new_file_path)
