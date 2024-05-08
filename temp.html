@@ -1,0 +1,443 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="/padron-puc-consulta-internet/css/estilo.css">
+<link rel="stylesheet" type="text/css" href="/padron-puc-consulta-internet/css/internet.css">
+<link rel="stylesheet" type="text/css" href="/padron-puc-consulta-internet/css/estilo_base.css">
+
+<script language="JavaScript" type="text/javascript" src="/padron-puc-consulta-internet/js/Util.js"></script>
+<script language="JavaScript" type="text/javascript" src="/padron-puc-consulta-internet/js/ComunAjax.js"></script>
+<script language="JavaScript" type="text/javascript" src="/padron-puc-consulta-internet/js/Comun.js"></script>
+
+<script language="JavaScript" src="/padron-puc-consulta-internet/js/PUCMenuInternet.js"> </script>
+
+<script language="JavaScript"> ez_codePath = "/padron-puc-consulta-internet/code/"                  </script>
+<script language="JavaScript"> document.write("<SCR" + "IPT SRC='" + ez_codePath + "ezloader.js'><\/SCR" + "IPT>"); </script><script src="/padron-puc-consulta-internet/code/ezloader.js"></script><script src="/padron-puc-consulta-internet/code/ezmenuie.js" type="text/javascript"></script></head><body onload="actualizaEntorno();"><div id="menu_0" style="white-space: nowrap; z-index: 999; position: absolute; top: 0px; left: 0px; cursor: pointer; background-color: rgb(17, 17, 17); width: 180px; visibility: hidden; height: 67px;"><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 171px; top: 2px; left: 2px;" id="menu_0_0"><nobr>Establecimientos,locales y otros</nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 178px; height: 21px; top: 1px; left: 1px;" id="menu_0_03d"></div><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 171px; top: 24px; left: 2px;" id="menu_0_1"><nobr>Domicilios de explotación</nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 178px; height: 21px; top: 23px; left: 1px;" id="menu_0_13d"></div><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 171px; top: 46px; left: 2px;" id="menu_0_2"><nobr>Domicilios erróneos</nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 178px; height: 21px; top: 45px; left: 1px;" id="menu_0_23d"></div></div><div id="menu_1" style="white-space: nowrap; z-index: 999; position: absolute; top: 0px; left: 0px; cursor: pointer; background-color: rgb(17, 17, 17); width: 253px; visibility: hidden; height: 111px;"><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 244px; top: 2px; left: 2px;" id="menu_1_0"><nobr>Informe autónomos</nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 251px; height: 21px; top: 1px; left: 1px;" id="menu_1_03d"></div><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 244px; top: 24px; left: 2px;" id="menu_1_1"><nobr>Registro de Operadores de Comercio Exterior</nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 251px; height: 21px; top: 23px; left: 1px;" id="menu_1_13d"></div><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 244px; top: 46px; left: 2px;" id="menu_1_2"><nobr>Residencia en el extranjero</nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 251px; height: 21px; top: 45px; left: 1px;" id="menu_1_23d"></div><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 244px; top: 68px; left: 2px;" id="menu_1_3"><nobr>Relaciones con otras CUITS</nobr></div><div style="white-space: nowrap; padding: 0px; z-index: 10; position: absolute; visibility: inherit; width: 10px; background: transparent; left: 237px; top: 73px;" id="menu_1_3s"><img src="images/arrow.gif" width="10px" height="10px" border="0px" vspace="0px" hspace="0px" style="display:block"></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 251px; height: 21px; top: 67px; left: 1px;" id="menu_1_33d"></div><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 244px; top: 90px; left: 2px;" id="menu_1_4"><nobr>Datos Históricos</nobr></div><div style="white-space: nowrap; padding: 0px; z-index: 10; position: absolute; visibility: inherit; width: 10px; background: transparent; left: 237px; top: 95px;" id="menu_1_4s"><img src="images/arrow.gif" width="10px" height="10px" border="0px" vspace="0px" hspace="0px" style="display:block"></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 251px; height: 21px; top: 89px; left: 1px;" id="menu_1_43d"></div></div><div id="menu_2" style="white-space: nowrap; z-index: 999; position: absolute; top: 0px; left: 0px; cursor: pointer; background-color: rgb(17, 17, 17); width: 160px; visibility: hidden; height: 45px;"><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 151px; top: 2px; left: 2px;" id="menu_2_0"><nobr>Relaciones con otras CUITS</nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 158px; height: 21px; top: 1px; left: 1px;" id="menu_2_03d"></div><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 151px; top: 24px; left: 2px;" id="menu_2_1"><nobr>Asociaciones</nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 158px; height: 21px; top: 23px; left: 1px;" id="menu_2_13d"></div></div><div id="menu_3" style="white-space: nowrap; z-index: 999; position: absolute; top: 0px; left: 0px; cursor: pointer; background-color: rgb(17, 17, 17); width: 203px; visibility: hidden; height: 155px;"><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 194px; top: 2px; left: 2px;" id="menu_3_0"><nobr>Impuestos históricos </nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 201px; height: 21px; top: 1px; left: 1px;" id="menu_3_03d"></div><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 194px; top: 24px; left: 2px;" id="menu_3_1"><nobr>Actividades económicas históricas </nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 201px; height: 21px; top: 23px; left: 1px;" id="menu_3_13d"></div><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 194px; top: 46px; left: 2px;" id="menu_3_2"><nobr>Categorías históricas monotributista</nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 201px; height: 21px; top: 45px; left: 1px;" id="menu_3_23d"></div><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 194px; top: 68px; left: 2px;" id="menu_3_3"><nobr>Categorías históricas autónomo</nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 201px; height: 21px; top: 67px; left: 1px;" id="menu_3_33d"></div><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 194px; top: 90px; left: 2px;" id="menu_3_4"><nobr>Caracterizaciones históricas</nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 201px; height: 21px; top: 89px; left: 1px;" id="menu_3_43d"></div><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 194px; top: 112px; left: 2px;" id="menu_3_5"><nobr>Domicilio Fiscal Electrónico histórico </nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 201px; height: 21px; top: 111px; left: 1px;" id="menu_3_53d"></div><div style="white-space: nowrap; z-index: 9; position: absolute; visibility: inherit; background-color: rgb(171, 205, 239); color: rgb(0, 0, 0); font-size: 9pt; font-family: Arial; padding: 3px; width: 194px; top: 134px; left: 2px;" id="menu_3_6"><nobr>Datos Digitales históricos </nobr></div><div style="white-space: nowrap; z-index: 8; position: absolute; visibility: inherit; font-size: 0pt; background-color: rgb(255, 255, 255); padding: 0px; width: 201px; height: 21px; top: 133px; left: 1px;" id="menu_3_63d"></div></div> 
+
+<script>menusGo()</script>
+
+<form name="miContextoForm" id="miContextoForm"><input type="hidden" name="miContexto" id="miContexto" value="/padron-puc-consulta-internet"></form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="-1">
+  
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <meta http-equiv="Cache-Control" content="must-revalidate">
+  <meta http-equiv="Cache-Control" content="proxy-revalidate">
+  <style type="text/css">
+  td {
+	  border-width: 0px;
+  }
+  </style>  	    
+  <title>Formulario de Impresión de Constancia de Monotributo</title>
+  
+  
+  <form><input type="hidden" name="response" value="constancia-sin-error"></form>
+  	
+  <style type="text/css">
+@media print {
+    #printpagetoolbar {
+        display :  none;
+    }
+}
+</style>
+<link rel="stylesheet" type="text/css" href="/padron-puc-consulta-internet/css/estilosGenericosParaConstancias.css">
+<table id="printpagetoolbar" class="subtitle" height="21" cellspacing="0" cellpadding="0" width="100%" border="0">
+  <tbody>
+    <tr>
+      <td align="left" class="columna">
+      <!--
+        <input type="button" name="btn_Anterior" value='Volver'   onclick='javascript:history.back(-1)' class="botonera-out-largo" tabindex="2" />
+        -->
+        <a name="btn_Anterior" href="javascript:history.back(-1)" class="button azul" style="background: none;height: 42px;">Volver</a>
+      </td>
+      <td class="columna">&nbsp;</td>
+      <td valign="center" align="right" width="100%">
+        <table cellspacing="0" cellpadding="0" border="0" style="margin:0;">
+          <tbody>
+            <tr>
+              <td class="simpleTextSmall" align="right">
+                <a name="btn_Imprimir" href="javascript:self.print()" class="button azul" style="background: none;height: 42px;">
+                <img src="/padron-puc-consulta-internet/images/printlittle.gif" border="0" alt="" style="margin: 0 0px 0 0px!important;
+                            vertical-align: 0;
+                            width: 15px !important;
+                            height: 15px !important;
+                            padding: 0 !important;
+                            float: none;
+                            background-color: 0;
+                            background: none;">
+                Imprimir Pantalla</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+  
+  
+    <table border="1" cellpadding="0" cellspacing="0" rules="groups" width="98%">
+      <tbody><tr>      
+      
+        <td width="40px" rowspan="0" align="CENTER" valign="middle">
+	        <table>
+	      		<tbody><tr><td valign="middle" height="105px"><img src="/padron-puc-consulta-internet/images/l_afip.png" style="margin-left: 1px; margin-right: 5px; visibility: hidden;"></td></tr>
+	      		<tr><td valign="middle" height="105px"><img src="/padron-puc-consulta-internet/images/l_afip.png" style="margin-left: 1px; margin-right: 5px; visibility: hidden;"></td></tr>
+	      		<tr><td valign="middle" height="105px"><img src="/padron-puc-consulta-internet/images/l_afip.png" style="margin-left: 1px; margin-right: 5px; visibility: hidden;"></td></tr>
+	      		<tr><td valign="middle" height="105px"><img src="/padron-puc-consulta-internet/images/l_afip.png" style="margin-left: 1px; margin-right: 5px; visibility: hidden;"></td></tr>
+	      		<tr><td valign="middle" height="105px"><img src="/padron-puc-consulta-internet/images/l_afip.png" style="margin-left: 1px; margin-right: 5px; visibility: hidden;"></td></tr>
+	      	</tbody></table>
+        </td>
+        
+        <td valign="top" align="center" width="100%">
+        
+          <table width="100%" align="CENTER">
+            <tbody><tr>
+              <td>&nbsp;</td>
+            </tr>            
+            <tr>
+              <td align="LEFT">
+                <br>
+                <img src="/padron-puc-consulta-internet/images/afipsolo.png">
+              </td>
+            </tr>
+            <tr>
+              <td align="CENTER">
+                <br>
+                <b>
+                <font face="Arial" size="6">CONSTANCIA DE OPCIÓN</font>
+                </b>
+                <br>
+                <b>
+                <font face="Arial" size="4">Régimen Simplificado para Pequeños Contribuyentes</font>
+                </b>
+              </td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>            
+            <tr>
+              <td>&nbsp;</td>
+            </tr>            
+            <tr>
+              <td>&nbsp;</td>
+            </tr>            
+
+
+      <tr>
+        <td>
+          <table border="1" cellpadding="0" cellspacing="0" rules="groups" align="LEFT" width="100%">
+            <tbody><tr>
+              <td>                
+                <b>
+                <font face="Arial" size="2">CUIT:&nbsp;</font>
+                </b>
+                <font face="Arial" size="2">23-28227829-4</font>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <font face="Arial" size="2">ARIAS CLARA JIMENA</font>
+              </td>
+            </tr>
+
+            
+            <tr>
+              <td>
+              
+                <font face="Arial" size="2">HIPÓLITO YRIGOYEN 1465     </font>
+              </td>
+            </tr>
+            
+            <tr>
+              <td>
+                <font face="Arial" size="2">TRES ARROYOS&nbsp;</font>
+              </td>
+            </tr>
+            
+            <tr>
+              <td>
+                <font face="Arial" size="2">7500-BUENOS AIRES</font>
+              </td>
+            </tr>
+            
+          </tbody></table>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>&nbsp;</td>
+      </tr>            
+      <tr>
+        <td><font face="Arial" size="2">020 - MONOTRIBUTO</font></td>
+      </tr>            
+      
+      
+      <tr align="LEFT">
+        <td align="CENTER">
+          <table width="100%">
+			<tbody><tr>
+			  <td>&nbsp;</td>
+			  <td width="100px">
+	            <font face="Arial" size="2"></font>
+	            <br>
+	            <table border="1" cellpadding="0" cellspacing="0" rules="groups">
+	              <tbody><tr>
+	                <td align="CENTER" nowrap="nowrap">
+	                  <font face="Arial" size="2">CATEGORÍA</font>
+	                  <br>
+	                  <font face="Arial" style="FONT-SIZE: 40pt">
+	                    A
+	                  </font>
+	                </td>
+	              </tr>
+	            </tbody></table>
+          	  </td>
+              <td>&nbsp;</td>
+      		</tr>   
+          </tbody></table>
+        </td>
+      </tr>   
+
+            <!-- Esta es la descripcion de la categoria -->
+            <tr>
+              <td align="CENTER">
+                <font face="Arial" size="2"> LOCACIONES DE SERVICIO&nbsp;</font>
+              </td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>            
+            <tr>
+              <td>
+                <font face="Arial" size="1">
+                
+                FECHA DE INICIO: 01-11-2020
+                
+                
+                </font>
+              </td>
+            </tr>            
+            
+            
+            
+	            <tr>
+	              <td><hr></td>
+	            </tr>
+	            <tr>
+        		  <td>&nbsp;</td>
+      			</tr>
+	            <tr>
+		          <td><font face="Arial" size="2">5095 
+		          - REGIMEN SIMPLIFICADO  IMPUESTO SOBRE INGRESOS BRUTOS ARBA</font></td>
+		        </tr>     
+		        <tr>
+		          <td align="CENTER"><b><font face="Arial" size="5">AC</font></b></td>
+		        </tr>
+		        <tr>
+		          	
+		          <td align="CENTER"><b><font face="Arial" size="2">(INSCRIPCIÓN DE OFICIO)</font></b></td>
+		        </tr>
+	            <tr>
+	              <td>
+	                <font face="Arial" size="1">FECHA DE INICIO: 01-07-2022</font>
+	              </td>
+	            </tr>
+	            
+	            
+            
+	            <tr>
+	              <td><hr></td>
+	            </tr>
+	            <tr>
+        		  <td>&nbsp;</td>
+      			</tr>
+	            <tr>
+		          <td><font face="Arial" size="2">5096 
+		          - REGIMEN SIMPLIFICADO CONTRIBUCION MUNICIPAL  ARBA - 
+		          TRES ARROYOS</font></td>
+		        </tr>     
+		        <tr>
+		          <td align="CENTER"><b><font face="Arial" size="5">NA</font></b></td>
+		        </tr>
+		        <tr>
+		          	
+		          <td align="CENTER"><b><font face="Arial" size="2">(JURISDICCIÓN NO ADHERIDA)</font></b></td>
+		        </tr>
+	            <tr>
+	              <td>
+	                <font face="Arial" size="1">FECHA DE INICIO: 01-09-2021</font>
+	              </td>
+	            </tr>    
+            
+                
+            
+            
+            
+             
+             
+             	<tr>
+	              <td><hr></td>
+	            </tr>
+	            <tr>
+        		  <td>&nbsp;</td>
+      			</tr>
+      			<tr>
+        		  <td>
+        		  <table>
+        		  
+        		  
+        		  <tbody><tr>
+        		  <td valign="top">
+        		  
+        		  <font face="Arial" size="2">ACTIVIDAD:&nbsp;</font>
+        		  
+        		  </td>
+        		  <td>
+        		  
+        		  
+        		  <font face="Arial" size="2">F883 - 869090 - SERVICIOS RELACIONADOS CON LA SALUD HUMANA N.C.P.</font>
+        		  </td>
+        		  </tr>
+        		  
+        		  
+        		  </tbody></table>
+        		  
+        		  </td>
+      			</tr>
+      			
+             
+             
+             
+            
+            
+            
+            <tr>
+              <td><font face="Arial" size="2"> </font></td>
+            </tr>
+            
+
+            
+            
+            
+            <tr>
+              <td>&nbsp;</td>
+            </tr>            
+      <tr>
+        <td>
+        
+          <table width="100%">
+            <tbody><tr>
+            
+        <td align="left">
+          <font face="Arial" size="1">Vigencia de la presente constancia:&nbsp;
+            <b>            
+            08-05-2024
+            &nbsp;a&nbsp;
+            
+            07-06-2024
+            
+           
+           </b> 
+          </font>
+          </td>
+          <td align="right">
+	        <font face="Arial" size="1">Hora&nbsp;</font>
+	        <font face="Arial" size="1">
+	        <b>
+	        13:27:53
+	        </b>
+	        <font face="Arial" size="1">&nbsp;Verificador&nbsp;</font>        
+	        <b>        
+	        206304050523
+	        </b>
+	        </font>
+          <br>	        
+        </td> 
+        
+            </tr>
+          </tbody></table>
+        
+        </td>
+      </tr>    
+
+
+
+
+          </tbody></table>
+        </td>
+        
+        <td width="40px" rowspan="0" align="CENTER" valign="middle">
+	        <table>
+	      		<tbody><tr><td align="right" valign="middle" height="105px"><img src="/padron-puc-consulta-internet/images/r_afip.png" style="margin-left: 5px; margin-right: 1px; visibility: hidden;"></td></tr>
+	      		<tr><td align="right" valign="middle" height="105px"><img src="/padron-puc-consulta-internet/images/r_afip.png" style="margin-left: 5px; margin-right: 1px; visibility: hidden;"></td></tr>
+	      		<tr><td align="right" valign="middle" height="105px"><img src="/padron-puc-consulta-internet/images/r_afip.png" style="margin-left: 5px; margin-right: 1px; visibility: hidden;"></td></tr>
+	      		<tr><td align="right" valign="middle" height="105px"><img src="/padron-puc-consulta-internet/images/r_afip.png" style="margin-left: 5px; margin-right: 1px; visibility: hidden;"></td></tr>
+	      		<tr><td align="right" valign="middle" height="105px"><img src="/padron-puc-consulta-internet/images/r_afip.png" style="margin-left: 5px; margin-right: 1px; visibility: hidden;"></td></tr>
+	      	</tbody></table>
+        </td>
+      </tr>
+
+
+
+
+
+      <tr>
+        <td colspan="3" align="CENTER"><br>
+            <table width="100%" style="display: none;">
+				<tbody><tr>
+					<td>&nbsp;</td>
+					<td width="592px">
+						<table width="100%">
+							<tbody><tr>
+								<td width="20%" align="center"><img src="/padron-puc-consulta-internet/images/h_afip.png"></td>
+								<td width="20%" align="center"><img src="/padron-puc-consulta-internet/images/h_afip.png"></td>
+								<td width="20%" align="center"><img src="/padron-puc-consulta-internet/images/h_afip.png"></td>
+								<td width="20%" align="center"><img src="/padron-puc-consulta-internet/images/h_afip.png"></td>
+								<td width="20%" align="center"><img src="/padron-puc-consulta-internet/images/h_afip.png"></td>
+							</tr>
+						</tbody></table>
+					</td>
+					<td>&nbsp;</td>
+				</tr>
+			</tbody></table>       
+        </td>
+      </tr>
+    </tbody></table>
+    <table width="100%">
+      <tbody><tr>
+        <td>
+          <font face="Arial" size="1">Los datos contenidos en la presente constancia deberán ser validados por el receptor de la misma en la página institucional de AFIP <a href="http://www.afip.gob.ar" target="_blank" rel="noopener noreferrer"><u>http://www.afip.gob.ar</u></a>.</font>
+        </td>
+      </tr>
+    </tbody></table>
+    <form><input type="hidden" name="idMensaje" id="idMensaje" value="puc.Constancia"></form>
+  
+
+<script id="f5_cspm">(function(){var f5_cspm={f5_p:'AKDKAKFDDIGLADFMEOMDLEJPLNEMFBNPOKPLGJLMGBFNHONHHFJABBKDGFJIBCPMMCIBPNBCAABNLNJMEJCABKKEAAMNEKNKAIAAJBEOOMPCEMFCCMHOPBDDKIONJCBG',setCharAt:function(str,index,chr){if(index>str.length-1)return str;return str.substr(0,index)+chr+str.substr(index+1);},get_byte:function(str,i){var s=(i/16)|0;i=(i&15);s=s*32;return((str.charCodeAt(i+16+s)-65)<<4)|(str.charCodeAt(i+s)-65);},set_byte:function(str,i,b){var s=(i/16)|0;i=(i&15);s=s*32;str=f5_cspm.setCharAt(str,(i+16+s),String.fromCharCode((b>>4)+65));str=f5_cspm.setCharAt(str,(i+s),String.fromCharCode((b&15)+65));return str;},set_latency:function(str,latency){latency=latency&0xffff;str=f5_cspm.set_byte(str,40,(latency>>8));str=f5_cspm.set_byte(str,41,(latency&0xff));str=f5_cspm.set_byte(str,35,2);return str;},wait_perf_data:function(){try{var wp=window.performance.timing;if(wp.loadEventEnd>0){var res=wp.loadEventEnd-wp.navigationStart;if(res<60001){var cookie_val=f5_cspm.set_latency(f5_cspm.f5_p,res);window.document.cookie='f5avr1231604309aaaaaaaaaaaaaaaa_cspm_='+encodeURIComponent(cookie_val)+';path=/';}
+return;}}
+catch(err){return;}
+setTimeout(f5_cspm.wait_perf_data,100);return;},go:function(){var chunk=window.document.cookie.split(/\s*;\s*/);for(var i=0;i<chunk.length;++i){var pair=chunk[i].split(/\s*=\s*/);if(pair[0]=='f5_cspm'&&pair[1]=='1234')
+{var d=new Date();d.setTime(d.getTime()-1000);window.document.cookie='f5_cspm=;expires='+d.toUTCString()+';path=/;';setTimeout(f5_cspm.wait_perf_data,100);}}}}
+f5_cspm.go();}());</script></body></html>

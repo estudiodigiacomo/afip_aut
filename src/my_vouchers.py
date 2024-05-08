@@ -18,10 +18,7 @@ def vouchers_download(client_name, type_voucher, date_from, date_to):
         # Selección de mis comprobantes
         my_receipts = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "rbt-menu-item-0")))
         my_receipts.click()
-        time.sleep(5)
-        
-        print('FECHA DESDE: ', date_from)
-        print('FECHA HASTA: ', date_to)
+        time.sleep(2)
 
         # Selección de primera ventana 
         windows_to_select = driver.window_handles
@@ -87,13 +84,15 @@ def vouchers_download(client_name, type_voucher, date_from, date_to):
         #Fecha desde
         date_select_from = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/div[1]/div[1]/input")))
         date_select_from.clear()
+        time.sleep(1)
         date_select_from.send_keys(date_from)
-        time.sleep(5)
+        time.sleep(1)
         #Fecha hasta
         date_select_to = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/div[2]/div[1]/input")))
         date_select_to.clear()
+        time.sleep(1)
         date_select_to.send_keys(date_to)
-        time.sleep(5)
+        time.sleep(1)
 
         # Buscar comprobantes
         search_proof = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'buscarComprobantes')))

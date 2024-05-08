@@ -1,16 +1,17 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
-from selenium.common.exceptions import NoSuchElementException
 from login_afip import login_afip
-from selenium import webdriver
 from datetime import datetime
+from pdfkit import from_url
+import pdfkit
 import os
 import time 
-import pyautogui
 import shutil
 
+
 def monotributist(client_name, constancy):
+
     try:
         driver = login_afip(client_name)
         driver.get('https://portalcf.cloud.afip.gob.ar/portal/app/')
@@ -19,7 +20,8 @@ def monotributist(client_name, constancy):
 
         # Configura la ruta de descarga
         prefs = {
-            "download.default_directory": download_dir
+            "download.prompt_for_download": False,
+            "download.default_directory": download_dir,
         }
         driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
         params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
@@ -40,7 +42,7 @@ def monotributist(client_name, constancy):
         driver.close()
         driver.switch_to.window(window_to_select[1])
 
-        #Seccion contancia
+        #Sesion contancia
         section_constancy = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/form/main/section/div/div/aside/nav/ul/div[1]/li[4]/a')))
         section_constancy.click()
 
@@ -62,46 +64,38 @@ def monotributist(client_name, constancy):
 def constancy_cuit(driver, client_name, constancy):
 
     if constancy == 'Constancia de CUIT':
+        #Voy a la pagina a imprimir
         click_constancy = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/form/main/section/div/div/div/div[1]/div/div/div[3]/button')))
         click_constancy.click()
+        time.sleep(5)
+        windows_to_select = driver.window_handles
+        driver.switch_to.window(windows_to_select[-1])
+        time.sleep(10)
+
+        # URL de la página web que contiene la tabla
+        url_pagina_web = driver.current_url
+        time.sleep(3)
+        path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+        # Obtener cookies de la sesión
+        cookies = driver.get_cookies()
+
+        # Generar archivo de cookies
+        with open('cookies.txt', 'w') as f:
+            for cookie in cookies:
+                f.write(f"{cookie['name']}={cookie['value']};\n")
+
+        # Configuración de pdfkit
+        config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+
+        # Generar PDF con la opción --cookie-file
+        from_url(url_pagina_web, 'resultado.pdf', configuration=config, options={'cookie-file': 'cookies.txt'})
+
     elif constancy == 'Formulario 184':
         click_form = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/form/main/section/div/div/div/div[2]/div/div/div[3]/a')))
         click_form.click()
     else:
             print('No se selecciono constancia ')
 
-    #Cambio de frame al hacer click en click_constancy
-    windows_to_select = driver.window_handles
-    driver.switch_to.window(windows_to_select[-1])
-    
-    time.sleep(10)
-    # Comando de teclas para descargar pdf
-    pyautogui.hotkey('ctrl', 'p')
-    time.sleep(10)
-    #Tab y down descargar como pdf
-    for _ in range(5):
-        pyautogui.press('tab')
-    pyautogui.press('down')
-    time.sleep(3)
-    for _ in range(4):
-        pyautogui.press('tab')
-    time.sleep(3)
-    pyautogui.press('enter')
-    time.sleep(3)
-    #Tab guardar windows
-    for _ in range(5):
-        pyautogui.press('tab')
-    time.sleep(3)
-    pyautogui.press('enter')
-    time.sleep(3)
-    pyautogui.typewrite('c:/default')
-    time.sleep(3)
-    pyautogui.press('enter')
-    for _ in range(9):
-        pyautogui.press('tab')
-    time.sleep(3)
-    pyautogui.press('enter')
-    time.sleep(10)
     # Fecha emisión
     date_now = datetime.now().date()
     date_emision = date_now.strftime("%d-%m-%Y")
@@ -161,8 +155,6 @@ def constancy_cuit(driver, client_name, constancy):
     time.sleep(5)
 
 
-import os
-
 def credentials_pay(driver, client_name):
     try:
         click_constancy = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/form/main/section/div/div/div/div[3]/div/div/div[3]/a')))
@@ -211,6 +203,6 @@ def credentials_pay(driver, client_name):
             print("El archivo se movió correctamente")
 
     except Exception as e:
-        print('Error al procesar la descarga de credencial de pago:', str(e))
+        print('Error al procesar monotributo:', str(e))
 
 

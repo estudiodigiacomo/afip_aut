@@ -95,7 +95,7 @@ def online_voucher(client_name, type_var, point_sale_var, date_from, date_to, ac
             camel_case_words = [word.capitalize() for word in words]
             client_name_camel = ' '.join(camel_case_words)
             #Ingreso nombre del cliente en la ruta
-            route_base = r'D:\Clientes\{}\Comprobantes en linea'
+            route_base = r'D:\Clientes\{}\Comprobante en linea'
             route_format = route_base.format(client_name_camel)
             route_completed = os.path.join(route_format, name_folder_period)
             
