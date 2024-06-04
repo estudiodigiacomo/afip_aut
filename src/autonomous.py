@@ -28,9 +28,9 @@ def autonomous(client_name):
         driver.close()
         # Cambio de foco a la primera ventana
         driver.switch_to.window(windows_to_select[1])
-
+        
         #Constancias
-        section_constancy = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/span/div[1]/article/div[1]/div[1]/div[2]/div/div[2]/div/a/span')))
+        section_constancy = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/span/div[1]/aside/nav/ul/li[3]/a')))
         section_constancy.click()
 
         #Constancia de incripcion

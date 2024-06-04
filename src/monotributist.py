@@ -3,8 +3,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
 from login_afip import login_afip
 from datetime import datetime
-from pdfkit import from_url
-import pdfkit
 import os
 import time 
 import shutil
@@ -56,7 +54,7 @@ def monotributist(client_name, constancy):
         camel_case_words = [word.capitalize() for word in words]
         client_name_camel = ' '.join(camel_case_words)
         #Ingreso nombre del cliente en la ruta
-        route_base = r'd:\Clientes\{}\Reporte'
+        route_base = r'D:\Clientes\{}\Reporte'
         route_format = route_base.format(client_name_camel)
         route_completed = os.path.join(route_format, name_folder_emision)
 
@@ -69,12 +67,12 @@ def monotributist(client_name, constancy):
         #Voy a la pagina a imprimir
             click_constancy = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/form/main/section/div/div/div/div[1]/div/div/div[3]/button')))
             click_constancy.click()
-            html_to_pdf(driver, client_name, constancy, route_completed, name_folder_emision)
+            print_page(driver, client_name, constancy, route_completed, name_folder_emision)
 
         elif constancy == 'Formulario 184':
             click_form = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/form/main/section/div/div/div/div[2]/div/div/div[3]/a')))
             click_form.click()
-            html_to_pdf(driver, client_name, constancy, route_completed, name_folder_emision)
+            print_page(driver, client_name, constancy, route_completed, name_folder_emision)
 
         elif constancy == 'Credencial de pago':
             click_form = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/form/main/section/div/div/div/div[3]/div/div/div[3]/a')))
@@ -119,24 +117,29 @@ def credentials_pay(client_name, route_completed, name_folder_emision):
         print('Error al procesar monotributo:', str(e))
 
 
-#Convertir html a pdf
-def html_to_pdf(driver, client_name, constancy, route_completed, name_folder_emision):
+#Imprimir pdf
+def print_page(driver, client_name, constancy, route_completed, name_folder_emision):
     try:
         time.sleep(5)
         windows_to_select = driver.window_handles
         driver.switch_to.window(windows_to_select[-1])
         time.sleep(10)
 
-        # Obtengo el HTML de la páginas
-        html_content = driver.page_source
 
-        path_wkhtmltopdf = r'c:\wkhtmltopdf\bin\wkhtmltopdf.exe'
+        driver.execute_script('window.print();')
 
-        # Guardo el HTML en un archivo temporal con codificación UTF-8
-        with open("temp.html", "w", encoding="utf-8") as file:
-            file.write(html_content)
-
-        config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+        # Esperar un momento para que se complete la descarga
+        time.sleep(10)
+        # Obtener la ruta de descarga predeterminada
+        download_default = r'c:\default'
+        # Obtener la lista de archivos en el directorio de descarga
+        files_in_download = os.listdir(download_default)
+        # Encontrar el archivo más reciente basado en su fecha de creación
+        latest_file = max(files_in_download, key=lambda f: os.path.getctime(os.path.join(download_default, f)))
+        # Mover el archivo más reciente al directorio de destino
+        shutil.move(os.path.join(download_default, latest_file), route_completed)
+        # Verificar que el archivo se haya movido correctamente
+        ruta_destino = os.path.join(route_completed, latest_file)
 
         if constancy == 'Constancia de CUIT':
             name_file = f"Constancia de inscripción - Monotributistas - AFIP - {client_name} - {name_folder_emision}.pdf"
@@ -145,8 +148,11 @@ def html_to_pdf(driver, client_name, constancy, route_completed, name_folder_emi
         else:
             print('No se asigno tipo de constancia para el nombre del archivo ')
 
-        pdfkit.from_file("temp.html", os.path.join(route_completed, name_file), configuration=config)    
-        print("La constancia de CUIT se ha guardado como PDF.")
+        new_file_path = os.path.join(route_completed, name_file)
+        os.rename(os.path.join(route_completed, latest_file), new_file_path)
+
+        if os.path.exists(ruta_destino):
+            print("El archivo se movió correctamente")
 
     except Exception as e:
         print('Error al procesar descarga de pdf:', str(e))

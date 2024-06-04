@@ -6,17 +6,41 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from tkinter import messagebox
+import json
 
 def login_afip(client_name):
-    options_nav = Options()
-    options_nav.add_argument('--start-maximized')
-    options_nav.add_experimental_option('prefs', {
-    "download.prompt_for_download": False, 
-    "download.default_directory": r"c:\default"
-    })
-    driver = webdriver.Chrome(options= options_nav)
-    #Login
     try:
+        options = webdriver.ChromeOptions()
+        options.add_argument('--start-maximized')
+        options.add_argument("--disable-blink-features=AutomationControlled")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--remote-debugging-port=9222")
+        options.add_experimental_option('prefs', {
+        "download.prompt_for_download": False, 
+        "download.default_directory": r"c:\default"z
+        })
+        appState = {
+            "recentDestinations": [
+                    {
+                        "id": "Save as PDF",
+                        "origin": "local",
+                        "account": ""
+                    }
+                ],
+                "selectedDestination": "Save as PDF",
+                "version": 2
+                    }
+        prefs = {
+            'printing.print_preview_sticky_settings.appState': json.dumps(appState),
+            'savefile.default_directory': r"c:\default"
+                }
+
+        options.add_experimental_option('prefs', prefs)
+        options.add_argument('--kiosk-printing')
+        options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36")
+        driver = webdriver.Chrome(options=options)
+
+        #Login
         # Obtener los datos del cliente desde Google Sheets
         clients = get_clients_from_sheets()
         for client in clients:
