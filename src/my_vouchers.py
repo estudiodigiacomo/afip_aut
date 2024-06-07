@@ -121,7 +121,8 @@ def vouchers_download(client_name, type_voucher, date_from, date_to):
         #Verificar si el comprobante esta vacio
         if 'No existe información para los filtros ingresados' in driver.page_source:
             default_content = "Contenido del archivo predeterminado"
-            default_file_path = os.path.join(download_dir, "default_vacio.pdf")
+            nombre_archivo = f'AFIP - VACIO - Mis Comprobantes Emitidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}.pdf'
+            default_file_path = os.path.join(download_dir, nombre_archivo)
             with open(default_file_path, "w") as file:
                 file.write(default_content)
                 # Espera para que se complete la descarga

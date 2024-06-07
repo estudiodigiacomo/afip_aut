@@ -4,6 +4,7 @@ from gui.online_voucher_wind import open_online_vouchers_window
 from read_sheet_afip import get_clients_from_sheets
 from gui.monotributist_wind import monostributist_wind
 from gui.autonomous_wind import autnomous_wind
+from gui.agropecuary_wind import primary_in_grains
 
 def main_window():
     global selection_window
@@ -12,7 +13,7 @@ def main_window():
     selection_window.geometry('400x200')
 
     clients = [client['name'] for client in get_clients_from_sheets()]
-    automation_types = ['Mis Comprobantes', 'Comprobantes en Línea', 'Monotributo', 'Autonomo']
+    automation_types = ['Mis Comprobantes', 'Comprobantes en Línea', 'Monotributo', 'Autonomo', 'Agropecuarios']
 
     client_var = tk.StringVar(selection_window)
     client_var.set(clients[0])
@@ -44,5 +45,7 @@ def open_voucher_window(client_name, automation_type):
         monostributist_wind(client_name)
     elif automation_type == 'Autonomo':
         autnomous_wind(client_name)
+    elif automation_type == 'Agropecuarios':
+        primary_in_grains(client_name)
     else:
         print("Tipo de automatización no reconocido:", automation_type)

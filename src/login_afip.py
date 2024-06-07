@@ -11,14 +11,11 @@ import json
 def login_afip(client_name):
     try:
         options = webdriver.ChromeOptions()
+        download_directory = r"c:\default"
         options.add_argument('--start-maximized')
         options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_argument("--disable-gpu")
         options.add_argument("--remote-debugging-port=9222")
-        options.add_experimental_option('prefs', {
-        "download.prompt_for_download": False, 
-        "download.default_directory": r"c:\default"z
-        })
         appState = {
             "recentDestinations": [
                     {
@@ -29,11 +26,12 @@ def login_afip(client_name):
                 ],
                 "selectedDestination": "Save as PDF",
                 "version": 2
-                    }
+                }
         prefs = {
             'printing.print_preview_sticky_settings.appState': json.dumps(appState),
-            'savefile.default_directory': r"c:\default"
-                }
+            "download.default_directory": download_directory,
+            'savefile.default_directory': download_directory
+            }
 
         options.add_experimental_option('prefs', prefs)
         options.add_argument('--kiosk-printing')

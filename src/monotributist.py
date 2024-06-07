@@ -77,7 +77,7 @@ def monotributist(client_name, constancy):
         elif constancy == 'Credencial de pago':
             click_form = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/form/main/section/div/div/div/div[3]/div/div/div[3]/a')))
             click_form.click()
-            credentials_pay(client_name, route_completed, name_folder_emision)
+            credentials_pay(client_name, route_completed, name_folder_emision, download_dir)
         else:
                 print('No se selecciono constancia ')
 
@@ -90,18 +90,16 @@ def monotributist(client_name, constancy):
 
 
 #Credenciales de pago
-def credentials_pay(client_name, route_completed, name_folder_emision):
+def credentials_pay(client_name, route_completed, name_folder_emision, download_dir):
     try:
         # Esperar un momento para que se complete la descarga
         time.sleep(10)
-        # Obtener la ruta de descarga predeterminada
-        download_default = r'c:\default'
         # Obtener la lista de archivos en el directorio de descarga
-        files_in_download = os.listdir(download_default)
+        files_in_download = os.listdir(download_dir)
         # Encontrar el archivo más reciente basado en su fecha de creación
-        latest_file = max(files_in_download, key=lambda f: os.path.getctime(os.path.join(download_default, f)))
+        latest_file = max(files_in_download, key=lambda f: os.path.getctime(os.path.join(download_dir, f)))
         # Mover el archivo más reciente al directorio de destino
-        shutil.move(os.path.join(download_default, latest_file), route_completed)
+        shutil.move(os.path.join(download_dir, latest_file), route_completed)
         # Verificar que el archivo se haya movido correctamente
         ruta_destino = os.path.join(route_completed, latest_file)
 
