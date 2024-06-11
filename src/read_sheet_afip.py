@@ -18,7 +18,7 @@ def get_clients_from_sheets():
         creds = service_account.Credentials.from_service_account_file(KEY, scopes= SCOPE)
         service = build('sheets' , 'v4', credentials= creds)
         sheet = service.spreadsheets()
-        result = sheet.values().get(spreadsheetId= SPREADSHEET_ID, range='aut-sheets!A2:N117').execute()
+        result = sheet.values().get(spreadsheetId= SPREADSHEET_ID, range='aut-sheets!A2:N118').execute()
         values = result.get('values', [])
         
         #Busqueda de datos

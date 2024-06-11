@@ -67,63 +67,88 @@ def primary_in_grains(client_name, date_from, date_to):
         folder_period = folders(client_name_formated, name_folder_period)
          #Llamo a funcion que verifica y crea carpetas
         folders(client_name_formated, name_folder_period)
-
+        print(folder_period)
         try:
             # Fecha emisión
             date_now = datetime.now().date()
             date_emision = date_now.strftime("%d-%m-%Y")
 
-            #Verifico si existen comprobantes
-            table_with_data = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH, '/html/body/center/div[2]/table/tbody/tr[2]/td/div[2]/div/form[2]/table[2]/tbody/tr[2]')))
+            # Verifico si existen comprobantes
+            table_with_data = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="tabla4"]')))
 
-            #Si existen datos descargo pdfs
+            # Si existen datos descargo pdfs
             if table_with_data.text.strip():
-                rows = driver.find_elements(By.XPATH, '//table[@class="jig_table"]/tbody/tr')
+                rows = table_with_data.find_elements(By.XPATH, './/tbody/tr')
                 # Iterar sobre cada fila
                 for row in rows:
-                    cells = row.find_elements(By.TAG_NAME, 'td')
-                    for cell in cells:
-                        try:
-                            #Leer numero de coe para nombre del archivo
-                            if len(cells) > 1:
-                                coe_number = cells[1].text
-                                print(coe_number)
-                            #Btn decarga
-                            download_button = cell.find_element(By.XPATH, './/img[@value="Ver Liquidación"]')
-                            download_button.click()
-                            time.sleep(5)
-                            
-                            #Obtener una lista de todos los archivos en la carpeta
-                            list_of_files = os.listdir(folder_period)
-                            # Buscar el archivo más reciente
-                            latest_file = None
-                            latest_file_time = 0
-                            for file_name in list_of_files:
-                                file_path = os.path.join(folder_period, file_name)
-                                if os.path.isfile(file_path):
-                                    file_time = os.path.getctime(file_path)
-                                if file_time > latest_file_time:
-                                    latest_file_time = file_time
-                                    latest_file = file_path
-                            #Renombro el archivo
-                            name_file_pdf = f'AFIP - Liquidaciones Primarias de Granos - Consulta Liquidaciones Recibidas - COE N {coe_number} - {new_period_date} - {client_name} - Fecha de Emisión {date_emision}'
+                    try:
+                        # Leer número de COE para nombre del archivo (segunda columna)
+                        cells = row.find_elements(By.TAG_NAME, 'td')
+                        if len(cells) > 1:
+                            coe_number = cells[1].text
+                            print(coe_number)
 
+                        # Btn descarga (última columna)
+                        download_button = row.find_element(By.XPATH, './/img[@alt="Ver Liquidación"]')
+                        download_button.click()
+                        time.sleep(5)
+                        # Obtener una lista de todos los archivos en la carpeta
+                        list_of_files = os.listdir(route_base)
+                        # Buscar el archivo más reciente
+                        latest_file = None
+                        latest_file_time = 0
+                        for file_name in list_of_files:
+                            file_path = os.path.join(route_base, file_name)
+                            if os.path.isfile(file_path):
+                                file_time = os.path.getctime(file_path)
+                            if file_time > latest_file_time:
+                                latest_file_time = file_time
+                                latest_file = file_path
+                        # Verificar que se encontró un archivo, mover y renombrar
+                        if latest_file is not None:
+                            destination_file = os.path.join(folder_period, os.path.basename(latest_file))
+                            shutil.move(latest_file, destination_file)
+                            # Renombrar el archivo movido
+                            name_file_pdf = f'AFIP - Liquidaciones Primarias de Granos - Consulta Liquidaciones Recibidas - COE N {coe_number} - {new_period_date} - {client_name_formated} - Fecha de Emisión {date_emision}'
                             new_file_path = os.path.join(folder_period, f"{name_file_pdf}.pdf")
-                            os.rename(latest_file, new_file_path)
-                            print("Archivo descargado y renombrado correctamente.")
-                            time.sleep(5)
-                            break
-                        except NoSuchElementException:
-                            continue
+                            os.rename(destination_file, new_file_path)
+                            print("Archivo descargado, movido y renombrado correctamente.")
+                        else:
+                            print("No se encontró ningún archivo para renombrar.")
+                        time.sleep(5)
+                    except NoSuchElementException:
+                        continue
                 time.sleep(2)
             else:
                 print('No hay datos para imprimir')     
 
             #Descargo resumen como pdf
             try:
+                # Inyectar CSS para ocultar elementos que no deben imprimirse
+                css_to_hide_elements = """
+                var style = document.createElement('style');
+                style.id = 'hide-elements-style';
+                style.innerHTML = `
+                    #encabezado, 
+                    #tabla3,
+                    .botonVolverMenuPrincipal bordesRedondos textoGris sombraBlanca highlight {
+                        display: none !important;
+                    }
+                `;
+                document.head.appendChild(style);
+                """
+                driver.execute_script(css_to_hide_elements)
                 time.sleep(5)
                 driver.execute_script('window.print();')
                 time.sleep(5)
+                # Eliminar el estilo inyectado
+                remove_css_to_hide_elements = """
+                var styleElement = document.getElementById('hide-elements-style');
+                if (styleElement) {
+                    styleElement.parentNode.removeChild(styleElement);
+                }
+                """
+                driver.execute_script(remove_css_to_hide_elements)
                 #Nombre del resumen pdf
                 resume_name = f'AFIP - Liquidaciones Primarias de Granos - Consulta Liquidaciones Recibidas - Resumen - Período {new_period_date} - {client_name} - Fecha de Emisión {date_emision}.pdf'
                 time.sleep(5)
