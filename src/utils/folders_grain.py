@@ -1,7 +1,7 @@
 import os
 import datetime
 
-def folders(client_name_formated, name_folder_period):
+def folders_grain(client_name_formated, name_folder_period):
     #Verifico existencia de las carpetas necesarias
     try:
         date = datetime.datetime.now()

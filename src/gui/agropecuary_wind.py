@@ -1,7 +1,6 @@
 import tkinter as tk
 from primary_in_grains import primary_in_grains
-from read_sheet_afip import get_clients_from_sheets
-from online_vouchers import online_voucher
+from cattle import cattle
 from tkcalendar import DateEntry
 import babel.numbers
 
@@ -14,7 +13,7 @@ def agropecuary_wind(client_name):
     selecction = tk.Label(agropecuary_wind, text='Seleccione proceso agropecuario:')
     selecction.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky='w')
 
-    type_options = ['Liquidacion Primaria de granos']
+    type_options = ['Liquidacion Primaria de granos', 'Hacienda y Carne']
 
     #Tipo de proceso
     type_label = tk.Label(agropecuary_wind, text="Proceso:")
@@ -36,10 +35,15 @@ def agropecuary_wind(client_name):
     date_to_entry.grid(row=5, column=1, padx=5, pady=5, sticky='w')
 
     #Inicio de automatizacion
-    btn_login = tk.Button(agropecuary_wind, text='Iniciar automatizacion', command=lambda: login_and_open_vouchers(client_name, date_from_entry.get(), date_to_entry.get()))
+    btn_login = tk.Button(agropecuary_wind, text='Iniciar automatizacion', command=lambda: login_and_open_vouchers(client_name, date_from_entry.get(), date_to_entry.get(), type_var.get()))
 
     btn_login.grid(row=6, column=0, columnspan=2, padx=5, pady=5, sticky='w')
     agropecuary_wind.mainloop()
 
-def login_and_open_vouchers(client_name, date_from, date_to):
-    primary_in_grains(client_name, date_from, date_to)
+def login_and_open_vouchers(client_name, date_from, date_to, automation):
+    if automation == 'Liquidacion Primaria de granos':
+        primary_in_grains(client_name, date_from, date_to)
+    elif automation == 'Hacienda y Carne':
+        cattle(client_name, date_from, date_to)
+    else:
+        print('No se selecciono proceso')

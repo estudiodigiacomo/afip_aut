@@ -1,23 +1,23 @@
 from login_afip import login_afip
+from utils.folders_cattle import folders_cattle_issue
+from utils.folders_cattle import folders_cattle_receiver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
-from utils.folders_grain import folders_grain
 import time
-from datetime import datetime
-import sys
 import os
 import shutil
+from datetime import datetime
+import sys
 
-def primary_in_grains(client_name, date_from, date_to):
+#Ingreso hasta pagina de hacienda
+def cattle(client_name, date_from, date_to):
     try:
         driver = login_afip(client_name)
-        route_base = r"c:\default"
          #Tipeo comprobantes en linea
         input_search = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. ID, "buscadorInput")))
-        input_search.send_keys('Liquidación primaria de granos')
+        input_search.send_keys('Comprobantes en Línea')
         #Selecciono comprobantes en linea
         online_vouchers = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/div/div/div[2]/section/div/div/div[2]/div/div/div[1]/div/div/ul/li/a/div/div/div[1]/div/p")))
         online_vouchers.click()
@@ -30,7 +30,7 @@ def primary_in_grains(client_name, date_from, date_to):
         driver.switch_to.window(window_to_select[1])
 
         #Busqueda y click de cliente
-        elements_clients = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/center/div[1]/table[2]/tbody/tr/td/table[2]/tbody/tr[2]/td/div/form/table/tbody/tr[3]")))
+        elements_clients = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/form/table/tbody/tr[4]")))
         inputs_clients = elements_clients.find_elements(By.XPATH, ".//input")
         for input_element in inputs_clients:
             values_clients = input_element.get_attribute('value')
@@ -39,23 +39,84 @@ def primary_in_grains(client_name, date_from, date_to):
         if values_clients == client_name:
             input_element.click()
 
-        btn_primary_in_grains = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/center/div[2]/table/tbody/tr[2]/td/div[2]/div/form[2]/table/tbody/tr[2]/td/input')))
-        btn_primary_in_grains.click()
+        time.sleep(5)
+        #Hacienda y Carnes
+        cattle_btn = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/table/tbody/tr[8]/td/a/span[2]")))
+        cattle_btn.click()
 
-        btn_received = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/center/div[2]/table/tbody/tr[2]/td/div[2]/div/form[2]/table/tbody/tr[4]/td/input')))
-        btn_received.click()
+        #Abrir ventana de hacienda (error de afip) a la primera falla, cierro y abro nuevamente
+        time.sleep(5)
+        window_to_select = driver.window_handles
+        driver.switch_to.window(window_to_select[1])
+        driver.close()
+        driver.switch_to.window(window_to_select[0])
 
-        #Fecha desde
-        date_from_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/center/div[2]/table/tbody/tr[2]/td/div[2]/div/form[2]/table[1]/tbody/tr[3]/td[1]/input[1]")))
-        date_from_input.clear()
-        date_from_input.send_keys(date_from)
-        #Fecha hasta
-        date_to_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/center/div[2]/table/tbody/tr[2]/td/div[2]/div/form[2]/table[1]/tbody/tr[3]/td[2]/input[1]")))
-        date_to_input.clear()
-        date_to_input.send_keys(date_to)
+        #Hacienda y Carnes
+        cattle_btn = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/table/tbody/tr[8]/td/a/span[2]")))
+        cattle_btn.click()
 
-        btn_consult = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/center/div[2]/table/tbody/tr[2]/td/div[2]/div/form[2]/table[1]/tbody/tr[3]/td[6]/input')))
+        #Cambio de iframe (ventana)
+        time.sleep(5)
+        window_to_select = driver.window_handles
+        driver.switch_to.window(window_to_select[0])
+        driver.close()
+        driver.switch_to.window(window_to_select[1])
+
+        person_btn = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/form/table/tbody/tr/td/input[2]')))
+        person_btn.click()
+
+        principal_cattle(client_name, date_from, date_to, driver)
+
+    except Exception as e:
+        print('Error:', str(e))
+
+
+#Controlador de procesos
+def principal_cattle(client_name, date_from, date_to, driver):
+    try:
+        #Datos emitidos
+        name_file_pdf = 'emitidos_pdf'
+        resume_name = 'emitidos_resume'
+        section = '//ul[@class="nav sidebar-nav menuBotones"]//a[contains(text(), "Consulta y ajuste de Liquidaciones - Por Emisor")]'
+        type_issued = 'issued'
+        vouchers_cattle(client_name, date_from, date_to, driver, section, name_file_pdf, resume_name, type_issued)
+
+        #Datos para operacion de receptor
+        name_file_pdf = 'receptor_pdf'
+        resume_name = 'receptor_resume'
+        section = '//ul[@class="nav sidebar-nav menuBotones"]//a[contains(text(), "Consulta y ajuste de Liquidaciones - Por Receptor")]'
+        type_receiver = 'receiver'
+        vouchers_cattle(client_name, date_from, date_to, driver, section, name_file_pdf, resume_name, type_receiver)
+
+    except Exception as e:
+        print('Error:', str(e))
+
+
+#Proceso segun tipo de voucher
+def vouchers_cattle(client_name, date_from, date_to, driver, section, name_file_pdf, resume_name, type):
+    try:
+        route_base = r"c:\default"
+        hamburger_btn = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div/div[2]/button')))
+        hamburger_btn.click()
+
+        transmitter_btn = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, section)))
+        transmitter_btn.click()
+
+        # Fecha desde
+        date_from_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fechaDesde")))
+        driver.execute_script("arguments[0].value = '';", date_from_input)
+        driver.execute_script("arguments[0].value = arguments[1];", date_from_input, date_from)
+
+        # Fecha hasta
+        date_to_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fechaHasta")))
+        driver.execute_script("arguments[0].value = '';", date_to_input)
+        driver.execute_script("arguments[0].value = arguments[1];", date_to_input, date_to)
+
+        btn_consult = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. ID, 'btnConsultar')))
         btn_consult.click()
+
+        pages = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div/div[3]/div[3]/div[1]/span/select/option[5]')))
+        pages.click()
 
         #Formateo fecha periodo
         period_date = date_from[3:]
@@ -64,32 +125,41 @@ def primary_in_grains(client_name, date_from, date_to):
         #Formateo nombre de cliente a capitalize
         client_name_formated = client_name.title() 
         time.sleep(3)
-        folder_period = folders_grain(client_name_formated, name_folder_period)
-         #Llamo a funcion que verifica y crea carpetas
-        folders_grain(client_name_formated, name_folder_period)
-        print(folder_period)
+        if type == 'issued':
+            folder_period = folders_cattle_issue(client_name_formated, name_folder_period)
+            #Llamo a funcion que verifica y crea carpetas
+            folders_cattle_issue(client_name_formated, name_folder_period)
+        elif type == 'receiver':
+            folder_period = folders_cattle_receiver(client_name_formated, name_folder_period)
+            #Llamo a funcion que verifica y crea carpetas
+            folders_cattle_receiver(client_name_formated, name_folder_period)
+            
         try:
             # Fecha emisión
             date_now = datetime.now().date()
             date_emision = date_now.strftime("%d-%m-%Y")
 
             # Verifico si existen comprobantes
-            table_with_data = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="tabla4"]')))
+            table_with_data = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'resultTable')))
 
             # Si existen datos descargo pdfs
             if table_with_data.text.strip():
-                rows = table_with_data.find_elements(By.XPATH, './/tbody/tr')
+                rows = table_with_data.find_elements(By.XPATH, '//*[@id="resultTable"]/tbody/tr')
                 # Iterar sobre cada fila
                 for row in rows:
                     try:
-                        # Leer número de COE para nombre del archivo (segunda columna)
+                        # Leer datos de el comprobante de las distintas columnas
                         cells = row.find_elements(By.TAG_NAME, 'td')
                         if len(cells) > 1:
-                            coe_number = cells[1].text
-                            print(coe_number)
+                            cuit = cells[0].text
+                            settlement_type = cells[1].text
+                            type_voucher = cells[2].text
+                            number_vocuher = cells[3].text
+                            date_voucher = cells[4].text
+                            date_of_issue = cells[5].text
 
                         # Btn descarga (última columna)
-                        download_button = row.find_element(By.XPATH, './/img[@alt="Ver Liquidación"]')
+                        download_button = cells[7].find_element(By.CSS_SELECTOR, 'a.btnImprimir.glyphicon-file')
                         download_button.click()
                         time.sleep(5)
                         # Obtener una lista de todos los archivos en la carpeta
@@ -109,8 +179,8 @@ def primary_in_grains(client_name, date_from, date_to):
                             destination_file = os.path.join(folder_period, os.path.basename(latest_file))
                             shutil.move(latest_file, destination_file)
                             # Renombrar el archivo movido
-                            name_file_pdf = f'AFIP - Liquidaciones Primarias de Granos - Consulta Liquidaciones Recibidas - COE N {coe_number} - {new_period_date} - {client_name_formated} - Fecha de Emisión {date_emision}'
-                            new_file_path = os.path.join(folder_period, f"{name_file_pdf}.pdf")
+                            name_file = f'{name_file_pdf} {client_name} {cuit} {settlement_type} {type_voucher} {number_vocuher}'
+                            new_file_path = os.path.join(folder_period, f"{name_file}.pdf")
                             os.rename(destination_file, new_file_path)
                             print("Archivo descargado, movido y renombrado correctamente.")
                         else:
@@ -129,9 +199,11 @@ def primary_in_grains(client_name, date_from, date_to):
                 var style = document.createElement('style');
                 style.id = 'hide-elements-style';
                 style.innerHTML = `
-                    #encabezado, 
-                    #tabla3,
-                    .botonVolverMenuPrincipal bordesRedondos textoGris sombraBlanca highlight {
+                    #navHeader, 
+                    .page-header,
+                    #btnConsultar.
+                    #formData,
+                    .footer content {
                         display: none !important;
                     }
                 `;
@@ -150,7 +222,6 @@ def primary_in_grains(client_name, date_from, date_to):
                 """
                 driver.execute_script(remove_css_to_hide_elements)
                 #Nombre del resumen pdf
-                resume_name = f'AFIP - Liquidaciones Primarias de Granos - Consulta Liquidaciones Recibidas - Resumen - Período {new_period_date} - {client_name} - Fecha de Emisión {date_emision}.pdf'
                 time.sleep(5)
                 #Busco archivos en el directorio
                 list_of_files = os.listdir(route_base)
@@ -158,8 +229,9 @@ def primary_in_grains(client_name, date_from, date_to):
                 # Mover el archivo más reciente al directorio de destino
                 shutil.move(os.path.join(route_base, find_file), folder_period)
                 # Verificar que el archivo se haya movido correctamente
+                name_file_resume = f'{resume_name} {client_name} {cuit} {settlement_type} {type_voucher} {number_vocuher}.pdf'
                 rute_destiny = os.path.join(folder_period, find_file)
-                new_file_path = os.path.join(folder_period, resume_name)
+                new_file_path = os.path.join(folder_period, name_file_resume)
                 os.rename(rute_destiny, new_file_path)
                 if os.path.exists(new_file_path):
                     print("El archivo de resumen se movió correctamente")
@@ -169,7 +241,8 @@ def primary_in_grains(client_name, date_from, date_to):
         except Exception as e:
             print('Error:', str(e))
         
+
+        time.sleep(20)
+
     except Exception as e:
         print('Error:', str(e))
-    sys.exit()
-
