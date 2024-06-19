@@ -2,6 +2,7 @@ import tkinter as tk
 from monotributist import monotributist
 
 def monostributist_wind(client_name):
+    global monotribustist_window
     monotribustist_window = tk.Tk()
     monotribustist_window.title('Monotributo')
     monotribustist_window.geometry('400x200')
@@ -22,4 +23,5 @@ def monostributist_wind(client_name):
     monotribustist_window.mainloop()
 
 def login_and_open_vouchers(client_name, constancy):
+    monotribustist_window.destroy()
     monotributist(client_name, constancy)

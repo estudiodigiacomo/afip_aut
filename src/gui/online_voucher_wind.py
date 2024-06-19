@@ -5,6 +5,7 @@ from tkcalendar import DateEntry
 import babel.numbers
 
 def open_online_vouchers_window(client_name):
+    global online_voucher
     online_vouchers_window = tk.Tk()
     online_vouchers_window.title('Comprobantes en Línea')
     online_vouchers_window.geometry('400x500')
@@ -55,4 +56,5 @@ def open_online_vouchers_window(client_name):
     online_vouchers_window.mainloop()
 
 def login_and_open_vouchers(client_name, type_var, point_sale_var, date_from, date_to, actividad):
+    online_voucher.destroy()
     online_voucher(client_name, type_var, point_sale_var, date_from, date_to, actividad)

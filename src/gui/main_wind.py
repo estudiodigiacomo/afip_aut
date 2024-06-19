@@ -7,7 +7,6 @@ from gui.autonomous_wind import autnomous_wind
 from gui.agropecuary_wind import agropecuary_wind
 
 def main_window():
-    global selection_window 
     selection_window = tk.Tk()
     selection_window.title('Automatizacion de AFIP - Estudio Contable Di Giacomo')
     selection_window.geometry('400x200')
@@ -20,6 +19,10 @@ def main_window():
         automation_type = automation_var.get()
         if automation_type == 'Agropecuarios':
             filtered_clients = [client['name'] for client in all_clients if client['proc_agro'] == 'Agropecuarios']
+        elif automation_type == 'Monotributo':
+            filtered_clients = [client['name'] for client in all_clients if client['proc_monotri'] == 'Monotributo']
+        elif automation_type == 'Autonomo':
+            filtered_clients = [client['name'] for client in all_clients if client['proc_auto'] == 'Autonomo']
         else:
             filtered_clients = [client['name'] for client in all_clients]
         
@@ -54,7 +57,6 @@ def main_window():
     selection_window.mainloop()
 
 def open_voucher_window(client_name, automation_type):
-    selection_window.destroy() 
 
     if automation_type == 'Mis Comprobantes':
         open_my_vouchers_window(client_name)

@@ -1,5 +1,6 @@
 import os
 import datetime
+from utils.config import folder_clients
 
 def folders_grain(client_name_formated, name_folder_period):
     #Verifico existencia de las carpetas necesarias
@@ -7,7 +8,6 @@ def folders_grain(client_name_formated, name_folder_period):
         date = datetime.datetime.now()
         formatted_folder = date.strftime("%d-%m-%Y %H.%M.%S")
 
-        folder_clients = r'D:\Clientes'
         folder_client = os.path.join(folder_clients, client_name_formated)
         folder_primary_in_grains = os.path.join(folder_client, 'Liquidaciones Primarias de Grano')
         folder_consult_received = os.path.join(folder_primary_in_grains, 'Consulta Liquidaciones Recibidas')

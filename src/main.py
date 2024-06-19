@@ -8,4 +8,4 @@ if __name__ == "__main__":
     driver = login_afip(client_name)
     if driver:
         driver.quit()
-sys.exit()
+    driver.quit()

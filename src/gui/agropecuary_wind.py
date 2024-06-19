@@ -5,10 +5,10 @@ from tkcalendar import DateEntry
 import babel.numbers
 
 def agropecuary_wind(client_name):
+    global agropecuary_wind
     agropecuary_wind = tk.Tk()
     agropecuary_wind.title('Agropecuarios')
-    agropecuary_wind.geometry('400x500') 
-    print(client_name)
+    agropecuary_wind.geometry('400x500')
 
     selecction = tk.Label(agropecuary_wind, text='Seleccione proceso agropecuario:')
     selecction.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky='w')
@@ -41,6 +41,7 @@ def agropecuary_wind(client_name):
     agropecuary_wind.mainloop()
 
 def login_and_open_vouchers(client_name, date_from, date_to, automation):
+    agropecuary_wind.destroy() 
     if automation == 'Liquidacion Primaria de granos':
         primary_in_grains(client_name, date_from, date_to)
     elif automation == 'Hacienda y Carne':

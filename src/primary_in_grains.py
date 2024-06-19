@@ -171,5 +171,4 @@ def primary_in_grains(client_name, date_from, date_to):
         
     except Exception as e:
         print('Error:', str(e))
-    sys.exit()
 

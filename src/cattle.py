@@ -73,17 +73,17 @@ def cattle(client_name, date_from, date_to):
 
 #Controlador de procesos
 def principal_cattle(client_name, date_from, date_to, driver):
-    try:
+    try: 
         #Datos emitidos
-        name_file_pdf = 'emitidos_pdf'
-        resume_name = 'emitidos_resume'
+        name_file_pdf = 'AFIP - Hacienda - Liquidaciones Recibidas - por Emisor - '
+        resume_name = 'AFIP - Hacienda - Liquidaciones Recibidas - por Emisor - Resumen - '
         section = '//ul[@class="nav sidebar-nav menuBotones"]//a[contains(text(), "Consulta y ajuste de Liquidaciones - Por Emisor")]'
         type_issued = 'issued'
         vouchers_cattle(client_name, date_from, date_to, driver, section, name_file_pdf, resume_name, type_issued)
 
         #Datos para operacion de receptor
-        name_file_pdf = 'receptor_pdf'
-        resume_name = 'receptor_resume'
+        name_file_pdf = 'AFIP - Hacienda - Liquidaciones Recibidas - por Receptor - '
+        resume_name = 'AFIP - Hacienda - Liquidaciones Recibidas - por Receptor - Resumen - '
         section = '//ul[@class="nav sidebar-nav menuBotones"]//a[contains(text(), "Consulta y ajuste de Liquidaciones - Por Receptor")]'
         type_receiver = 'receiver'
         vouchers_cattle(client_name, date_from, date_to, driver, section, name_file_pdf, resume_name, type_receiver)
@@ -139,59 +139,6 @@ def vouchers_cattle(client_name, date_from, date_to, driver, section, name_file_
             date_now = datetime.now().date()
             date_emision = date_now.strftime("%d-%m-%Y")
 
-            # Verifico si existen comprobantes
-            table_with_data = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'resultTable')))
-
-            # Si existen datos descargo pdfs
-            if table_with_data.text.strip():
-                rows = table_with_data.find_elements(By.XPATH, '//*[@id="resultTable"]/tbody/tr')
-                # Iterar sobre cada fila
-                for row in rows:
-                    try:
-                        # Leer datos de el comprobante de las distintas columnas
-                        cells = row.find_elements(By.TAG_NAME, 'td')
-                        if len(cells) > 1:
-                            cuit = cells[0].text
-                            settlement_type = cells[1].text
-                            type_voucher = cells[2].text
-                            number_vocuher = cells[3].text
-                            date_voucher = cells[4].text
-                            date_of_issue = cells[5].text
-
-                        # Btn descarga (última columna)
-                        download_button = cells[7].find_element(By.CSS_SELECTOR, 'a.btnImprimir.glyphicon-file')
-                        download_button.click()
-                        time.sleep(5)
-                        # Obtener una lista de todos los archivos en la carpeta
-                        list_of_files = os.listdir(route_base)
-                        # Buscar el archivo más reciente
-                        latest_file = None
-                        latest_file_time = 0
-                        for file_name in list_of_files:
-                            file_path = os.path.join(route_base, file_name)
-                            if os.path.isfile(file_path):
-                                file_time = os.path.getctime(file_path)
-                            if file_time > latest_file_time:
-                                latest_file_time = file_time
-                                latest_file = file_path
-                        # Verificar que se encontró un archivo, mover y renombrar
-                        if latest_file is not None:
-                            destination_file = os.path.join(folder_period, os.path.basename(latest_file))
-                            shutil.move(latest_file, destination_file)
-                            # Renombrar el archivo movido
-                            name_file = f'{name_file_pdf} {client_name} {cuit} {settlement_type} {type_voucher} {number_vocuher}'
-                            new_file_path = os.path.join(folder_period, f"{name_file}.pdf")
-                            os.rename(destination_file, new_file_path)
-                            print("Archivo descargado, movido y renombrado correctamente.")
-                        else:
-                            print("No se encontró ningún archivo para renombrar.")
-                        time.sleep(5)
-                    except NoSuchElementException:
-                        continue
-                time.sleep(2)
-            else:
-                print('No hay datos para imprimir')     
-
             #Descargo resumen como pdf
             try:
                 # Inyectar CSS para ocultar elementos que no deben imprimirse
@@ -229,14 +176,67 @@ def vouchers_cattle(client_name, date_from, date_to, driver, section, name_file_
                 # Mover el archivo más reciente al directorio de destino
                 shutil.move(os.path.join(route_base, find_file), folder_period)
                 # Verificar que el archivo se haya movido correctamente
-                name_file_resume = f'{resume_name} {client_name} {cuit} {settlement_type} {type_voucher} {number_vocuher}.pdf'
+                name_file_resume = f'{resume_name} {client_name} - {name_folder_period}.pdf'
                 rute_destiny = os.path.join(folder_period, find_file)
                 new_file_path = os.path.join(folder_period, name_file_resume)
                 os.rename(rute_destiny, new_file_path)
                 if os.path.exists(new_file_path):
                     print("El archivo de resumen se movió correctamente")
             except Exception as e:
-                print('Error al descargar resumen', {str(e)})           
+                print('Error al descargar resumen', {str(e)})
+
+            # Verifico si existen comprobantes
+            table_with_data = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'resultTable')))
+
+            # Si existen datos descargo pdfs
+            if table_with_data.text.strip():
+                rows = table_with_data.find_elements(By.XPATH, '//*[@id="resultTable"]/tbody/tr')
+                # Iterar sobre cada fila
+                for row in rows:
+                    try:
+                        # Leer datos de el comprobante de las distintas columnas
+                        cells = row.find_elements(By.TAG_NAME, 'td')
+                        if len(cells) > 1:
+                            cuit = cells[0].text
+                            settlement_type = cells[1].text
+                            type_voucher = cells[2].text
+                            number_vocuher = cells[3].text
+                            date_voucher = cells[4].text.replace('/', '-')
+                            date_of_issue = cells[5].text.replace('/', '-')
+
+                        # Btn descarga (última columna)
+                        download_button = cells[7].find_element(By.CSS_SELECTOR, 'a.btnImprimir.glyphicon-file')
+                        download_button.click()
+                        time.sleep(5)
+                        # Obtener una lista de todos los archivos en la carpeta
+                        list_of_files = os.listdir(route_base)
+                        # Buscar el archivo más reciente
+                        latest_file = None
+                        latest_file_time = 0
+                        for file_name in list_of_files:
+                            file_path = os.path.join(route_base, file_name)
+                            if os.path.isfile(file_path):
+                                file_time = os.path.getctime(file_path)
+                            if file_time > latest_file_time:
+                                latest_file_time = file_time
+                                latest_file = file_path
+                        # Verificar que se encontró un archivo, mover y renombrar
+                        if latest_file is not None:
+                            destination_file = os.path.join(folder_period, os.path.basename(latest_file))
+                            shutil.move(latest_file, destination_file)
+                            # Renombrar el archivo movido
+                            name_file = f'{name_file_pdf} {client_name} - CUIT N {cuit} - TipoLiq {settlement_type} - TipoComp N {type_voucher} - CompN {number_vocuher} - Fecha del Comprobante {date_voucher}'
+                            new_file_path = os.path.join(folder_period, f"{name_file}.pdf")
+                            os.rename(destination_file, new_file_path)
+                            print("Archivo descargado, movido y renombrado correctamente.")
+                        else:
+                            print("No se encontró ningún archivo para renombrar.")
+                        time.sleep(5)
+                    except NoSuchElementException:
+                        continue
+                time.sleep(2)
+            else:
+                print('No hay datos para imprimir')                
 
         except Exception as e:
             print('Error:', str(e))

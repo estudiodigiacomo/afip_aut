@@ -7,7 +7,6 @@ import os
 import time 
 import shutil
 
-
 def monotributist(client_name, constancy):
     try:
         driver = login_afip(client_name)

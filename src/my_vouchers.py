@@ -28,7 +28,7 @@ def vouchers_download(client_name, type_voucher, date_from, date_to):
         # Cambio de foco a la primera ventana
         driver.switch_to.window(windows_to_select[1])
 
-        if type_voucher == 'emitidos':
+        if type_voucher == 'Comprobantes Emitidos':
             download_dir = r"c:\comprobantes-emitidos"
         else:
             download_dir = r"c:\comprobantes-recibidos"
@@ -68,10 +68,10 @@ def vouchers_download(client_name, type_voucher, date_from, date_to):
                 if not found_represented:
                     print('No se encontró el representado')
         # Calendario
-        if type_voucher == 'emitidos':
+        if type_voucher == 'Comprobantes Emitidos':
             print('emitidos')
             driver.get('https://fes.afip.gob.ar/mcmp/jsp/comprobantesEmitidos.do')
-        elif type_voucher == 'recibidos':
+        elif type_voucher == 'Comprobantes Recibidos':
             print('recibidos')
             driver.get('https://fes.afip.gob.ar/mcmp/jsp/comprobantesRecibidos.do')
         else:
@@ -100,10 +100,10 @@ def vouchers_download(client_name, type_voucher, date_from, date_to):
         time.sleep(10)
 
         # Tomo fecha periodo
-        if type_voucher == 'emitidos':
+        if type_voucher == 'Comprobantes Emitidos':
             date_start_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/main/div/section/div[1]/div/div[2]/div[2]/div[1]/div[2]/ul/li[1]/b[1]")))
 
-        elif type_voucher == 'recibidos':
+        elif type_voucher == 'Comprobantes Recibidos':
             date_start_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/main/div/section/div/div/div[2]/div[3]/div[1]/div[2]/ul/li[1]/b[1]")))
         else:
             print('Error en boton de descarga, tipo de comprobante')
@@ -148,9 +148,9 @@ def vouchers_download(client_name, type_voucher, date_from, date_to):
 
             # Verificar si se encontró un archivo más reciente
             if latest_file:
-                if type_voucher == 'emitidos':
+                if type_voucher == 'Comprobantes Emitidos':
                     nombre_archivo = f'AFIP - Mis Comprobantes Emitidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}'
-                elif type_voucher == 'recibidos':
+                elif type_voucher == 'Comprobantes Recibidos':
                     nombre_archivo = f'AFIP - Mis Comprobantes Recibidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}'
                 else:
                     print('Error al designar el nombre del archivo, no se proporciona tipo de comprobante')
@@ -164,10 +164,10 @@ def vouchers_download(client_name, type_voucher, date_from, date_to):
             time.sleep(10)
             
             # Verificar si se encontró un archivo más reciente
-            if type_voucher == 'emitidos':
+            if type_voucher == 'Comprobantes Emitidos':
                 download_excel_emi = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section/div[1]/div/div[2]/div[2]/div[2]/div[1]/div[1]/div/button[1]')))
                 download_excel_emi.click()
-            elif type_voucher == 'recibidos':
+            elif type_voucher == 'Comprobantes Recibidos':
                 download_excel_reci = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section/div/div/div[2]/div[3]/div[2]/div[1]/div[1]/div/button[1]')))
                 download_excel_reci.click()
             else:
@@ -189,9 +189,9 @@ def vouchers_download(client_name, type_voucher, date_from, date_to):
 
             # Verificar si se encontró un archivo más reciente
             if latest_file:
-                if type_voucher == 'emitidos':
+                if type_voucher == 'Comprobantes Emitidos':
                     nombre_archivo = f'AFIP - Mis Comprobantes Emitidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}'
-                elif type_voucher == 'recibidos':
+                elif type_voucher == 'Comprobantes Recibidos':
                     nombre_archivo = f'AFIP - Mis Comprobantes Recibidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}'
                 else:
                     print('Error al designar el nombre del archivo, no se proporciona tipo de comprobante')
@@ -205,10 +205,10 @@ def vouchers_download(client_name, type_voucher, date_from, date_to):
             time.sleep(10)
 
             # Verificar si se encontró un archivo más reciente
-            if type_voucher == 'emitidos':
+            if type_voucher == 'Comprobantes Emitidos':
                 download_csv_emi = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section/div[1]/div/div[2]/div[2]/div[2]/div[1]/div[1]/div/button[1]')))
                 download_csv_emi.click()
-            elif type_voucher == 'recibidos':
+            elif type_voucher == 'Comprobantes Recibidos':
                 download_csv_reci = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section/div/div/div[2]/div[3]/div[2]/div[1]/div[1]/div/button[1]')))
                 download_csv_reci.click()
             else:
@@ -245,9 +245,9 @@ def vouchers_download(client_name, type_voucher, date_from, date_to):
 
             # Verificar si se encontró un archivo más reciente
             if latest_file:
-                if type_voucher == 'emitidos':
+                if type_voucher == 'Comprobantes Emitidos':
                     nombre_archivo = f'AFIP - Mis Comprobantes Emitidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}'
-                elif type_voucher == 'recibidos':
+                elif type_voucher == 'Comprobantes Recibidos':
                     nombre_archivo = f'AFIP - Mis Comprobantes Recibidos - Período {date_modified_start} - {client_name} - Fecha de Emisión {date_emision}'
                 else:
                     print('Error al designar el nombre del archivo, no se proporciona tipo de comprobante')
@@ -257,9 +257,7 @@ def vouchers_download(client_name, type_voucher, date_from, date_to):
                 print("Archivo descargado y renombrado correctamente.")
             else:
                 print("No se encontraron archivos en la carpeta de descargas.")
-           
-
-            
+                       
     except Exception as e:
         print('Error al procesar comprobantes:', str(e))
     finally:

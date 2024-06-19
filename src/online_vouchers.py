@@ -197,4 +197,3 @@ def online_voucher(client_name, type_var, point_sale_var, date_from, date_to, ac
         time.sleep(15)
     except Exception as e:
         print('Error:', str(e))
-    sys.exit()
