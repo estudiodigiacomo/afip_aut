@@ -5,6 +5,7 @@ from read_sheet_afip import get_clients_from_sheets
 from gui.monotributist_wind import monostributist_wind
 from gui.autonomous_wind import autnomous_wind
 from gui.agropecuary_wind import agropecuary_wind
+from gui.ccma_gui import ccma_gui
 
 def main_window():
     selection_window = tk.Tk()
@@ -34,7 +35,7 @@ def main_window():
         for client in filtered_clients:
             client_menu['menu'].add_command(label=client, command=tk._setit(clients_var, client))
 
-    automation_types = ['Mis Comprobantes', 'Comprobantes en Línea', 'Monotributo', 'Autonomo', 'Agropecuarios']
+    automation_types = ['Mis Comprobantes', 'Comprobantes en Línea', 'Monotributo', 'Autonomo', 'Agropecuarios', 'CCMA']
     automation_var = tk.StringVar(selection_window)
     automation_var.set(automation_types[0])
     tk.Label(selection_window, text='Selecciona el tipo de automatización:').pack()
@@ -68,6 +69,8 @@ def open_voucher_window(client_name, automation_type):
         autnomous_wind(client_name)
     elif automation_type == 'Agropecuarios':
         agropecuary_wind(client_name)
+    elif automation_type == 'CCMA':
+        ccma_gui(client_name)
     else:
         print("Tipo de automatización no reconocido:", automation_type)
 
