@@ -57,7 +57,9 @@ def ccma(client_name, cuil):
         debit_balance = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By. XPATH, '/html/body/table[2]/tbody/tr[2]/td[2]/form/table[1]/tbody/tr[2]/td/table/tbody/tr[2]/td/table/tbody/tr[1]/td[2]/table/tbody/tr/td[1]')))
         debit_balance_text = debit_balance.text
 
-        print(debit_balance_text)
+        value_debit_float = float(debit_balance_text.replace(",", ""))
+        # Formatear el valor con puntos y comas
+        value_formated = f"{value_debit_float:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
         #Formateo nombre de cliente a capitalize
         client_name_formated = client_name.title()
@@ -66,7 +68,7 @@ def ccma(client_name, cuil):
 
         file_path = os.path.join(folder_date_emision, f"Saldo deudor - {client_name} - Cuenta Corriente para Contribuyentes Autonomos - Monotributistas.txt")
         with open(file_path, "w") as file_create:
-            file_create.write(debit_balance_text)
+            file_create.write(value_formated)
         
         driver.execute_script('window.print();')
         time.sleep(5)
